@@ -1,9 +1,11 @@
 #ifndef DBMANAGER_H
 #define DBMANAGER_H
 
-#include <singleton.h>
+#include <gallerymanager.h>
 
-class DBManager : public Singleton<DBManager>
+using namespace BootPrints::Interfaces;
+
+class DBManager : public GalleryManager
 {
 
     public:

@@ -1,20 +1,12 @@
 #ifndef MEDIADB_H
 #define MEDIADB_H
 
-#include <QFile>
-#include <QByteArray>
+#include <mediaitem.h>
 
 class MediaDB
 {
 public:
     MediaDB();
-
-    struct MediaItem
-    {
-        QFile fp;
-        QByteArray &hash;
-
-    };
 
     void add(const QFile &filepath);
     void del(const QFile &filepath);

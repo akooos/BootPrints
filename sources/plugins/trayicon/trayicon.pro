@@ -1,4 +1,4 @@
-TARGET = GalleryManager
+TARGET = TrayIcon
 
 TEMPLATE = lib
 
@@ -12,13 +12,9 @@ QMAKE_CXXFLAGS += -std=c++17
 # deprecated API in order to know how to port your code away from it.
 DEFINES += QT_DEPRECATED_WARNINGS
 
-SOURCES += mediadb.cpp \
-           dbmanager.cpp \
-           mediaitem.cpp
 
-HEADERS += mediadb.h \
-           dbmanager.h \
-           mediaitem.h
+
+
 
 INCLUDEPATH += ../../patterns \
                ../../lib \
@@ -49,3 +45,9 @@ OBJECTS_DIR = $${OTHERS_DEST_DIR}/objs
 MOC_DIR = $${OTHERS_DEST_DIR}/mocs
 RCC_DIR = $${OTHERS_DEST_DIR}/rccs
 UI_DIR = $${OTHERS_DEST_DIR}/uis
+
+HEADERS += \
+    trayicon.h
+
+SOURCES += \
+    trayicon.cpp

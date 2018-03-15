@@ -26,13 +26,10 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     main.cpp \
-    mainwindow.cpp \
-    ../lib/config.cpp
+    mainwindow.cpp
 
 HEADERS += \
     mainwindow.h \
-    ../lib/common.h \
-    ../lib/config.h \
     ../patterns/singleton.h \
     ../lib/interfaces/gallerymanager.h
 

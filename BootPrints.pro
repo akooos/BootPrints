@@ -1,7 +1,13 @@
 TEMPLATE = subdirs
 
 SUBDIRS += \
+    sources/lib \
+    sources/gui \
     sources/plugins/gallerymanager \
-    sources/gui
+    sources/plugins/trayicon
 
+
+gui.depends = lib
+gallerymanager.depends = lib
+trayicon.depends = lib
 

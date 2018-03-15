@@ -5,7 +5,7 @@
 
 #ifdef QT_DEBUG
     #include <QDateTime>
-    #define DEBUG_MSG(s) qDebug() << QDateTime::currentDateTime().toString(Qt::DefaultLocaleShortDate) << "@" << __func__ << "#" << __LINE__ << ":" << s;
+    #define DEBUG_MSG(s) qDebug() << QDateTime::currentDateTime().toString(Qt::DefaultLocaleShortDate) << "@" << __PRETTY_FUNCTION__ << "#" << __LINE__ << ":" << s;
 #else
     #define DEBUG_MSG(s);
 #endif
