@@ -14,3 +14,4 @@ trayicon.depends = lib
 OTHER_FILES += \
     README.md \
     TODO.txt
+
