@@ -11,3 +11,6 @@ gui.depends = lib
 gallerymanager.depends = lib
 trayicon.depends = lib
 
+OTHER_FILES += \
+    README.md \
+    TODO.txt

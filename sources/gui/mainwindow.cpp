@@ -1,52 +1,39 @@
 
 #include "mainwindow.h"
-#include <ui_mainwindow.h>
+
 #include <iostream>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow),
-    iconAppMain(QIcon(":/appMainIcon"))
+    iconAppMain(QIcon(":/appMainIcon")),
+    aClose(new QAction(tr("Close")), &QObject::deleteLater )
 {     
     setWindowIcon(iconAppMain);
-    ui->setupUi(this);
-    QString dbHost = Conf.dbHost;
-    DEBUG_MSG(dbHost)
-    Conf.dbHost = QString("Teszt");
-    createActions();
-    createTrayIcon();
-}
-
-MainWindow::~MainWindow()
-{
-    delete systemTrayIcon;
-    delete ui;
-}
-
-void MainWindow::createActions()
-{
-    actionClose = new QAction(tr("Close"));
-
-    bool checker = QObject::connect(actionClose,SIGNAL(triggered(bool)),this,SLOT(onActionClose(bool)));
+    ui.setupUi(this);
+    //QString dbHost = Conf.dbHost;
+   // DEBUG_MSG(dbHost)
+    //Conf.dbHost = QString("Teszt");
+    DEBUG_MSG(APP_VERSION)
+    DEBUG_MSG( PLUGIN_ID(kutya) )
+    bool checker = QObject::connect(aClose.data(),SIGNAL(triggered(bool)),this,SLOT(onActionClose(bool)));
 
     Q_ASSERT(checker);
 
     Q_UNUSED(checker);
 }
-void MainWindow::createTrayIcon()
+
+MainWindow::~MainWindow()
 {
-    QMenu *menu = new QMenu(this);
-    menu->addAction(actionClose);
+}
 
-    ui->centralWidget->addAction(actionClose);
+const QIcon &MainWindow::appIcon() const
+{
+    return iconAppMain;
+}
 
-    systemTrayIcon = new QSystemTrayIcon(iconAppMain,this);
-    systemTrayIcon->setContextMenu(menu);
-    systemTrayIcon->show();
-
-    bool checker = QObject::connect(systemTrayIcon,SIGNAL(activated(QSystemTrayIcon::ActivationReason)),this,SLOT(onSystemTrayActivated(QSystemTrayIcon::ActivationReason)));
-
-    Q_ASSERT(checker);
+const QActionPtr MainWindow::actionClose() const
+{
+    return aClose;
 }
 
 void MainWindow::onActionClose(bool triggered)
@@ -58,16 +45,4 @@ void MainWindow::onActionClose(bool triggered)
 
 }
 
-void MainWindow::onSystemTrayActivated(QSystemTrayIcon::ActivationReason reason)
-{
-    switch (reason) {
-        case QSystemTrayIcon::Trigger:
-        case QSystemTrayIcon::DoubleClick:
-            setVisible( !isVisible() );
-            break;
-        case QSystemTrayIcon::MiddleClick:
-            break;
-        default:
-            ;
-        }
-}
+

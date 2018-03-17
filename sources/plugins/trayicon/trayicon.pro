@@ -13,14 +13,12 @@ QMAKE_CXXFLAGS += -std=c++17
 DEFINES += QT_DEPRECATED_WARNINGS
 
 
-
-
-
 INCLUDEPATH += ../../patterns \
                ../../lib \
-               ../../lib/interfaces
+               ../../lib/interfaces \
+               ../../gui
 
-PLUGIN_DESC_FILES = $${TARGET}.json
+PLUGIN_DESC_FILES = $$lower($${TARGET}).json
 
 BUILD_DIR=../../../builds
 
@@ -51,3 +49,6 @@ HEADERS += \
 
 SOURCES += \
     trayicon.cpp
+
+OTHER_FILES = \
+    $$lower($${TARGET}).json

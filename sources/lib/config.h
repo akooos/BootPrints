@@ -8,7 +8,9 @@
 
 #define PROPERTY(type,name)  ConfigEntry<type> name = { #name }
 #define PROPERTY_WITH_DEFAULT(type,name,defaultValue)  ConfigEntry<type> name = { #name, defaultValue }
-#define GROUPED_PROPERTY(type,group,name,defaultValue)  ConfigEntryWithGroup<type> name = { #group, #name, defaultValue }
+#define CONFIG_GROUP(name) static const char * config_group = #name;
+#define GROUPED_PROPERTY(type,name,defaultValue)  ConfigEntryWithGroup<type> name = { config_group, #name, defaultValue }
+
 
 
 namespace{
@@ -40,8 +42,7 @@ struct ConfigEntry
      */
     operator T()
     {
-        const T t;
-        return value(t);
+        return value();
     }
     /**
      * @brief Checks whether the given field exists in the config.
@@ -69,8 +70,7 @@ struct ConfigEntry
 
         return settings->value(this->name, this->defaultValue);
     }
-    QString value(T t)  {
-        Q_UNUSED(t)
+    QString value()  {
         return getValue().toString();
     }
 public slots:
@@ -87,7 +87,7 @@ template <class T>
 struct ConfigEntryWithGroup : public ConfigEntry<T>
 {
 
-    const QString group;
+    const QString &group;
     /**
      * @brief Construct an Observer templated class
      * @param group group name in the config
@@ -95,11 +95,11 @@ struct ConfigEntryWithGroup : public ConfigEntry<T>
      * @param defaultValue
      */
     ConfigEntryWithGroup(
-            const char *group,
-            const char *name,
+            const QString &group,
+            const QString &name,
             const QVariant &defaultValue = QVariant()
             ): ConfigEntry<T>(name,defaultValue),
-        group(QString(group))
+        group(group)
     {
 
     }
@@ -147,7 +147,7 @@ public:
     }
     PROPERTY(int,posx);
     PROPERTY(int,posy);
-    GROUPED_PROPERTY(QString,db,dbHost,"Hello world%");
+   // GROUPED_PROPERTY(QString,db,dbHost,"Hello world%");
 
 };
 

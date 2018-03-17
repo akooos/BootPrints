@@ -1,13 +1,79 @@
 #include "trayicon.h"
 
-TrayIcon::TrayIcon()
+
+#include <QMessageBox>
+
+
+TrayIcon::TrayIcon(QObject *parent):QObject(parent),ui(nullptr)
+{
+    systemTrayIcon.setContextMenu(&menu);
+}
+
+void TrayIcon::init(QHash<QString, BasePlugin *> deps )
 {
     if (!QSystemTrayIcon::isSystemTrayAvailable()) {
         QMessageBox::critical(0, QObject::tr("Systray"),
                               QObject::tr("I couldn't detect any system tray "
                                           "on this system."));
-        return 1;
+        return;
     }
 
+    auto it = deps.find("bootprints-qtui");
+    if ( it != deps.end() )
+    {
+        QMessageBox::critical(0, QObject::tr("Systray"),
+                              QObject::tr("Bootprints Qt UI does not run!"));
+        return;
+    }
 
+    auto *ptr = *it;
+    if ( !ptr )
+    {
+        QMessageBox::critical(0, QObject::tr("Systray"),
+                              QObject::tr("Bootprints Qt UI does not run?! Empty pointer."));
+    }
+
+     ui = dynamic_cast<UIPlugin*> (ptr);
+
+    if ( !ui )
+    {
+        QMessageBox::critical(0, QObject::tr("Systray"),
+                              QObject::tr("Bootprints Qt UI does not run?! No proper pointer."));
+    }
+
+    QList<QAction*> actions;
+
+    actions.append( ui->actionClose().data());
+    menu.addActions(actions);
+
+    systemTrayIcon.setVisible(true);
+
+    bool checker = QObject::connect(
+                &systemTrayIcon,
+                SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
+                this,
+                SLOT(onSystemTrayActivated(QSystemTrayIcon::ActivationReason))
+                );
+
+    Q_ASSERT(checker);
+
+    Q_UNUSED(checker);
+}
+
+void TrayIcon::dispose()
+{
+    ui = nullptr;
+}
+void TrayIcon::onSystemTrayActivated(QSystemTrayIcon::ActivationReason reason)
+{
+    switch (reason) {
+        case QSystemTrayIcon::Trigger:
+        case QSystemTrayIcon::DoubleClick:
+            //setVisible( !isVisible() );
+            break;
+        case QSystemTrayIcon::MiddleClick:
+            break;
+        default:
+            ;
+        }
 }

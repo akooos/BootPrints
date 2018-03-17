@@ -7,7 +7,57 @@
     #include <QDateTime>
     #define DEBUG_MSG(s) qDebug() << QDateTime::currentDateTime().toString(Qt::DefaultLocaleShortDate) << "@" << __PRETTY_FUNCTION__ << "#" << __LINE__ << ":" << s;
 #else
-    #define DEBUG_MSG(s);
+    #define DEBUG_MSG(s)
 #endif
 
+#define STR(s) #s
+#define STRINGIFY(s) STR(s)
+#define DOT
+#define CONCAT(a,b,c,d) a##d##b##d##c
+#define EVAL_CONCAT(a,b,c,d) CONCAT(a,b,c,d)
+
+#define ORG_NAME Akooos
+#define ORG_DOMAIN Hungary
+#define APP_NAME BootPrints
+// V E R S I O N
+#define MAJOR 0
+#define MINOR 1
+#define BUGFIX 0
+#define APP_VERSION STRINGIFY(EVAL_CONCAT(MAJOR,MINOR,BUGFIX,DOT))
+#define PLUGIN_ID(name) STRINGIFY(EVAL_CONCAT(ORG_NAME,APP_NAME,name,DOT))
+
+
+#if defined(__clang__)
+#define COMPILER "Clang/LLVM"
+
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+#define COMPILER "Intel ICC/ICPC"
+
+#elif defined(__GNUC__) || defined(__GNUG__)
+#define COMPILER "GNU GCC/G++"
+
+#elif defined(__HP_cc) || defined(__HP_aCC)
+#define COMPILER "Hewlett-Packard C/aC++"
+
+#elif defined(__IBMC__) || defined(__IBMCPP__)
+#define COMPILER "IBM XL C/C++"
+
+#elif defined(_MSC_VER)
+#define COMPILER "Microsoft Visual Studio"
+
+#elif defined(__PGI)
+#define COMPILER "Portland Group PGCC/PGCPP"
+
+#elif defined(__SUNPRO_C) || defined(__SUNPRO_CC)
+#define COMPILER "Oracle Solaris Studio"
+#else
+#define COMPILER "Unknown"
+#endif
+namespace BootPrints{
+    static const char * version = APP_VERSION;
+    static const char * build_date = __DATE__;
+    static const char * build_time = __TIME__;
+    static const char * compiler = COMPILER;
+}
 #endif // COMMON_H
+

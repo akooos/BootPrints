@@ -1,23 +1,24 @@
 #ifndef PLUGIN_H
 #define PLUGIN_H
 
-#include <QStringList>
-
-#define BOOTPRINTS_DECLARE_INTERFACE(name,id) \
-    #define name##_iid #id \
-    Q_DECLARE_INTERFACE(name, name##_iid);
+#include <QtPlugin>
+#include <QHash>
 
 namespace BootPrints{
+
   namespace Interfaces {
-    struct Plugin{
-       virtual void init() = 0;
+
+    struct BasePlugin {
+        virtual ~BasePlugin() = default;
+    };
+
+    struct Plugin : BasePlugin {
+       virtual void init( QHash<QString,BasePlugin*> deps ) = 0;
        virtual void dispose() = 0;
-       virtual QStringList dependencies()
-       {
-          return QStringList();
-       }
     };
   }
 }
+#define Plugin_iid "org.Akooos.BootPrints.Plugin"
+Q_DECLARE_INTERFACE(BootPrints::Interfaces::Plugin, Plugin_iid)
 
 #endif // PLUGIN_H
