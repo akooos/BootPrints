@@ -1,2 +1,3 @@
-#BootPrints
-Image and video viewer application. Under development.
+# BootPrints
+Image and video viewer application.
+Currently under development.

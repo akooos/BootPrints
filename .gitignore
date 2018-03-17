@@ -1,5 +1,5 @@
-./builds/**
-./archive/**
+builds/
+archive/
 # C++ objects and libs
 *.slo
 *.lo
