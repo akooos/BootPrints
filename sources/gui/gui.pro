@@ -30,12 +30,12 @@ SOURCES += \
 
 HEADERS += \
     mainwindow.h \
-    ../patterns/singleton.h \
-    ../lib/interfaces/gallerymanager.h
+    uiplugin.h
 
 INCLUDEPATH += \
     ../patterns \
     ../lib \
+    ../lib/interfaces \
     ../../resources/uis
 
 FORMS += \

@@ -1,18 +1,15 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <QMainWindow>
+
+#include <ui_mainwindow.h>
 #include "common.h"
 #include "config.h"
+#include "uiplugin.h"
 
-#include <QMainWindow>
-#include <QMessageBox>
-#include <QSystemTrayIcon>
 
-namespace Ui {
-class MainWindow;
-}
-
-class MainWindow : public QMainWindow
+class MainWindow : public QMainWindow, public UIPlugin
 {
     Q_OBJECT
 
@@ -20,18 +17,22 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-private:    
-    Ui::MainWindow  *ui;
-    QSystemTrayIcon *systemTrayIcon;
-    QIcon            iconAppMain;
+    virtual const QIcon & appIcon() const;
+    virtual const QActionPtr actionClose() const;
 
-    QAction   *actionClose;
+private:    
+    Ui::MainWindow  ui;
+
+    QIcon   iconAppMain;
+    QActionPtr aClose;
+
+    QList<QAction> lsGeneralActions;
 
     void createTrayIcon();
     void createActions();
 private slots:
     void onActionClose(bool);
-    void onSystemTrayActivated(QSystemTrayIcon::ActivationReason);
+
 };
 
 #endif // MAINWINDOW_H

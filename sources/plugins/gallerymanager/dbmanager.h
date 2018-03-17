@@ -3,13 +3,10 @@
 
 #include <gallerymanager.h>
 
-using namespace BootPrints::Interfaces;
+using namespace Core::Interfaces;
 
-class DBManager : public GalleryManager
+struct DBManager : GalleryManager
 {
-
-    public:
-    DBManager();
 
 
 };

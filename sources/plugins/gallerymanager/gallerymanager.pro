@@ -13,7 +13,6 @@ QMAKE_CXXFLAGS += -std=c++17
 DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += mediadb.cpp \
-           dbmanager.cpp \
            mediaitem.cpp
 
 HEADERS += mediadb.h \
@@ -24,7 +23,10 @@ INCLUDEPATH += ../../patterns \
                ../../lib \
                ../../lib/interfaces
 
-PLUGIN_DESC_FILES = $${TARGET}.json
+PLUGIN_DESC_FILES = $$lower($${TARGET}).json
+
+OTHER_FILES = \
+    $$lower($${TARGET}).json
 
 BUILD_DIR=../../../builds
 
