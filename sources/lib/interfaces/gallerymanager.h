@@ -13,5 +13,7 @@ namespace BootPrints
    };
  }
 }
+#define GalleryManager_iid "org.Akooos.BootPrints.GalleryManager"
+Q_DECLARE_INTERFACE(BootPrints::Interfaces::GalleryManager, GalleryManager_iid)
 
 #endif // GALLERYMANAGER_H

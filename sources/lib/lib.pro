@@ -3,12 +3,11 @@ CONFIG += staticlib
 
 TARGET = BootPrintsCore
 
-version.target = version.h
-version.depends = FORCE
-version.commands = git describe --always
-PRE_TARGETDEPS += version.h
-
-QMAKE_EXTRA_TARGETS += version
+#version.target = version.h
+#version.depends = FORCE
+#version.commands = git describe --always
+#PRE_TARGETDEPS += version.h
+#QMAKE_EXTRA_TARGETS += version
 
 HEADERS += \
     config.h \
@@ -26,7 +25,9 @@ SOURCES += \
 
 INCLUDEPATH += \
     interfaces
-BUILD_DIR = ../../builds
+
+BUILD_DIR = \
+    ../../builds
 
 CONFIG(debug, debug|release) {
     DEFINES += DEBUG_MODE

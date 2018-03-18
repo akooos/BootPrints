@@ -19,7 +19,7 @@ void TrayIcon::init(QHash<QString, BasePlugin *> deps )
     }
 
     auto it = deps.find("bootprints-qtui");
-    if ( it != deps.end() )
+    if ( it == deps.end() )
     {
         QMessageBox::critical(0, QObject::tr("Systray"),
                               QObject::tr("Bootprints Qt UI does not run!"));
@@ -31,6 +31,7 @@ void TrayIcon::init(QHash<QString, BasePlugin *> deps )
     {
         QMessageBox::critical(0, QObject::tr("Systray"),
                               QObject::tr("Bootprints Qt UI does not run?! Empty pointer."));
+        return;
     }
 
      ui = dynamic_cast<UIPlugin*> (ptr);
@@ -39,13 +40,14 @@ void TrayIcon::init(QHash<QString, BasePlugin *> deps )
     {
         QMessageBox::critical(0, QObject::tr("Systray"),
                               QObject::tr("Bootprints Qt UI does not run?! No proper pointer."));
+        return;
     }
 
     QList<QAction*> actions;
 
     actions.append( ui->actionClose().data());
     menu.addActions(actions);
-
+    systemTrayIcon.setIcon(ui->appIcon());
     systemTrayIcon.setVisible(true);
 
     bool checker = QObject::connect(

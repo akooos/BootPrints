@@ -1,47 +1,80 @@
 TODO
+====
+-----
+   pluginek nem kell az összes többi plugint látnia: csak a függőségeit
 ------
-    config for plugins, groupped by pluginname
-    -
-------
-  uiplugin
-   csak arra való hogy a beépített erőforrásokat,
-   actionoket el lehessen érni pluginból
-
---------
- GUIFace interface vissza, csak másnéven...
- lenne egy  QWidget * widget() metódus, amiben
- saját grafikus felületet lehet csinálni
-
---------
-
-VERSION.h does not generated.
--> fix
----------------
-
-#define Plugin_iid "org.Akooos.BootPrints.Plugin"
-Q_DECLARE_INTERFACE(BootPrints::Interfaces::Plugin, Plugin_iid)
--> egy soros makróvá szebb legyen
-
----------------------
-
-TrayIcon plugin
--> első gui plugin, megépítése segít kialakítani a keretrendszert
-
+FolderShare plugin
+feladata:
+    egy vagy több mappa figyelése; új média fájl esetén signal "newMediaItemCaught" küldése
+------------
+Share (vagy csak ShareReceiver) plugin interface
+feladata:
+    interface a media megosztások fogadásához
+---
+GalleryManager plugin interface
+feladata:
+    *- offset, és limitálható querizése a galériáknak
+    *- galériák törlése, hozzáadása, szerkesztése
+    *- média elem hozzáadása galériához
+    *- média elem törlése galériából
+    ...
+-------------
+Notification plugin interface
+feladata:
+    felhasználói üzenetek továbbítása valamilyen értesítőhöz
+megjegyzés:
+    a Logger pluginnal egybe lehetne gyúrni
+-------
+Logger plugin interface
+feladat:
+    error/warning stb jelzések loggolás biztosítása
 ------------------
-
+MediaViewer plugin interface
+-> lenne egy QWidget * widget() metódus,
+amiben egyedi kép/videó nézegető felületet lehetne készíteni
+--------
+ConfigUI plugin interface
+-> lenne egy QWidget * widget() metódus, amiben
+saját grafikus konfigurációs felületet lehetne csinálni a pluginoknak
+---------------------
+  UIPlugin interface
+  feladata: arra való hogy a beépített erőforrásokat,
+  actionoket el lehessen érni pluginból
+  Ezt implementálja le a MainWindow
+  -> ki kell bővíteni
+--------
+TrayIcon plugin
+-> alapvetően készen van
+-> több menüpont hozzáadása
+-> tray icon kattintásra legyen ablak eltűnés/feltűnés
+------------------
 GalleryManager plugin
-SQLite3 adatbázis épít a gépen található kép/videó fájlokról
+feladata:
+    SQLite3 adatbázis a gépen található kép/videó fájlokról
+    gallery-kbe csoportosítva
 műveletek:
-    find, query, add, del, move, remove
-
+    query: tetszőleges query írása
+    add: hizzáadás
+    del: törlés
+    update:...
 --------------
 Organizer plugin
 függőségek: GalleryManger
 műveletek:
     place(mediapath)
 feladat:
-   o- duplikációk megszűntetése a kiválaszott gallerymanager
+   o- duplikációk megszűntetése a kiválaszott gallerymanager gallery-ben
    o- mappába rendezés, készítés év, hónap stb szerint például
-
-
 ------------
+Popup a message to whether set the defaults
+after detect of previous failure
+-----------
+#define Plugin_iid "org.Akooos.BootPrints.Plugin"
+Q_DECLARE_INTERFACE(BootPrints::Interfaces::Plugin, Plugin_iid)
+-> egy soros makróvá kellene alakítani részben vagy teljesen hogy szebb legyen
+<- nem lehetséges a preprocessor miatt .-okkal ősszefűzve nem preprocessor azonosító
+<- constexpr lehetséges?!
+-----------
+VERSION.h nem generálódik.
+cél: git revision szám beírása a buildbe
+-> fix

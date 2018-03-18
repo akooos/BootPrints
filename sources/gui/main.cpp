@@ -6,10 +6,10 @@ int main(int argc, char *argv[])
     DEBUG_MSG("Starting application.")
     Q_INIT_RESOURCE(icons);
 
-    QApplication::setOrganizationName(STR(ORG_DOMAIN));
-    QApplication::setOrganizationDomain(STR(ORG_DOMAIN));
-    QApplication::setApplicationDisplayName(STR(APP_NAME));
-    QApplication::setApplicationName(STR(APP_NAME));
+    QApplication::setOrganizationName(BootPrints::org_name);
+    QApplication::setOrganizationDomain(BootPrints::org_domain);
+    QApplication::setApplicationDisplayName(BootPrints::app_name);
+    QApplication::setApplicationName(BootPrints::app_name);
     QApplication::setApplicationVersion(APP_VERSION);
     QApplication::setQuitOnLastWindowClosed(true);
 

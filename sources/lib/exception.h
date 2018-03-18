@@ -2,46 +2,59 @@
 #define EXCEPTION_H
 
 #include <QException>
+#include "common.h"
 
 using namespace std;
 
 
 namespace BootPrints
 {
+    namespace ExceptionCodes
+    {
+        enum ExceptionCode
+        {
+            UnknownError,
+            CannotAddPluginError
+        };
+    }
     namespace
     {
-        typedef unsigned int ExceptionCode;
-        const ExceptionCode
-            UnknownError = 0,
-            CannotAddPluginError = 1;
-
-        const QHash<ExceptionCode,QString> messages =
+        const QHash<ExceptionCodes::ExceptionCode,QString> messages =
         {
-            { UnknownError, "Unknown error!"}
+            { ExceptionCodes::UnknownError, "Error: \"%1\" "},
+            { ExceptionCodes::CannotAddPluginError, "Could not add plugin: %1, %2"}
         };
-
     }
 
-    template <ExceptionCode ErrorCode>
     class Exception : QException
     {
+        ExceptionCodes::ExceptionCode ec;
         QString msg;
     public:
 
+        static inline void fail(
+            const ExceptionCodes::ExceptionCode ec = ExceptionCodes::UnknownError,
+            const  std::initializer_list<QString> & ls = {}
+        )
+        {
+            Exception e(ec,ls);
+            e.raise();
+        }
         Exception(
+                const ExceptionCodes::ExceptionCode ec = ExceptionCodes::UnknownError,
                 const  std::initializer_list<QString> & ls = {}
         )
         {
-            auto it = BootPrints::messages.find(ErrorCode);
+            auto it = BootPrints::messages.find(ec);
             if ( it == messages.end() )
             {
-                msg = messages[UnknownError];
+                msg = messages[ExceptionCodes::UnknownError];
             } else{
                 msg = *it;
-                for( const QString &item : ls)
-                {
-                    msg = msg.arg(item);
-                }
+            }
+            for( const QString &item : ls)
+            {
+                msg = msg.arg(item);
             }
         }
         operator QString() const
@@ -54,6 +67,7 @@ namespace BootPrints
         }
         void raise() const
         {
+            DEBUG_MSG(this->toString())
             throw *this;
         }
         Exception *clone() const
@@ -61,10 +75,6 @@ namespace BootPrints
             return new Exception(*this);
         }
     };
-    namespace Exceptions
-    {
-        typedef Exception<UnknownError> UnknownErrorExpcetion;
-        typedef Exception<CannotAddPluginError> CannotAddPluginExpcetion;
-    }
+
 }
 #endif // EXCEPTION_H

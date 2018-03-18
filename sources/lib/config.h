@@ -1,39 +1,34 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#include <memory>
+#include <common.h>
+
 #include <QSettings>
-#include <singleton.h>
 
 
-#define PROPERTY(type,name)  ConfigEntry<type> name = { #name }
-#define PROPERTY_WITH_DEFAULT(type,name,defaultValue)  ConfigEntry<type> name = { #name, defaultValue }
-#define CONFIG_GROUP(name) static const char * config_group = #name;
-#define GROUPED_PROPERTY(type,name,defaultValue)  ConfigEntryWithGroup<type> name = { config_group, #name, defaultValue }
+#define CONFIG_MAIN_PROPERTY(type,name,args...) ConfigEntry<type> name = { #name, args }
+#define CONFIG_GROUP(name) const QString config_group = name;
+#define CONFIG_PROPERTY(type,name,args...)  GrouppedConfigEntry<type> name = { config_group, #name, args };
 
-
-
-namespace{
-    std::unique_ptr<QSettings> settings = {nullptr};
+namespace
+{
+    QSettings settings = QSettings(BootPrints::org_name,BootPrints::app_name);
 }
+
 template <class T>
 struct ConfigEntry
 {    
     //key in the config
     const QString name;
-    //default value if entry does not exist
-    const QVariant defaultValue;
+
     /**
      * @brief Construct an Observer templated class
      * @param name key in the config
-     * @param defaultValue
      */
     ConfigEntry(
-            const char *name,
-            const QVariant &defaultValue = QVariant()
+        const QString &name
     ):
-        name(QString(name)),
-        defaultValue(defaultValue)
+        name(name)
     {
 
     }
@@ -42,15 +37,8 @@ struct ConfigEntry
      */
     operator T()
     {
-        return value();
-    }
-    /**
-     * @brief Checks whether the given field exists in the config.
-     * @returns True when config entry exists in the config.
-     */
-    operator bool() const
-    {
-        return hasValue();
+        QVariant result = value();
+        return result.value<T>();
     }
     /**
      * @brief Saves value to the config.
@@ -60,33 +48,28 @@ struct ConfigEntry
         setValue(value);
         return *this;
     }
-    virtual bool hasValue()
+    virtual bool exists() const
     {
-
-        return settings->contains(this->name);
+        return settings.contains(this->name);
     }
-    virtual QVariant getValue()
+    virtual QVariant value(QVariant defaultValue = QVariant()) const
     {
-
-        return settings->value(this->name, this->defaultValue);
+        return settings.value(this->name, defaultValue);
     }
-    QString value()  {
-        return getValue().toString();
-    }
-public slots:
-
-    void setValue(const T& value)
+    QString toString()
     {
-
-        settings->setValue(this->name,value);
-        settings->sync();
+        return value().toString();
+    }
+    virtual void setValue(const T& value)
+    {
+        settings.setValue(this->name,value);
+        settings.sync();
     }
 };
 
 template <class T>
-struct ConfigEntryWithGroup : public ConfigEntry<T>
+struct GrouppedConfigEntry : public ConfigEntry<T>
 {
-
     const QString &group;
     /**
      * @brief Construct an Observer templated class
@@ -94,63 +77,43 @@ struct ConfigEntryWithGroup : public ConfigEntry<T>
      * @param name key in the config
      * @param defaultValue
      */
-    ConfigEntryWithGroup(
+    GrouppedConfigEntry(
             const QString &group,
-            const QString &name,
-            const QVariant &defaultValue = QVariant()
-            ): ConfigEntry<T>(name,defaultValue),
+            const QString &name
+            ): ConfigEntry<T>(name),
         group(group)
     {
 
     }
-    ConfigEntryWithGroup<T> & operator=(const T& value)
+    GrouppedConfigEntry<T> & operator=(const T& value)
     {
-        return static_cast<ConfigEntryWithGroup&> ( ConfigEntry<T>::operator = ( value) );
+        return static_cast<GrouppedConfigEntry&> ( ConfigEntry<T>::operator = ( value ) );
     }
-    bool hasValue()
+    /**
+     * @brief exists
+     * @return
+     */
+    bool exists() const override
     {
-
-        settings->beginGroup(this->group);
-        bool result = settings->contains(this->name);
-        settings->endGroup();
+        settings.beginGroup(this->group);
+        bool result = settings.contains(this->name);
+        settings.endGroup();
         return result;
     }
-    QVariant getValue()
+    QVariant value(QVariant defaultValue = QVariant()) const override
     {
-
-        settings->beginGroup(this->group);
-        QVariant result = settings->value(this->name,this->defaultValue);
-        settings->endGroup();
+        settings.beginGroup(this->group);
+        QVariant result = settings.value(this->name,defaultValue);
+        settings.endGroup();
         return result;
     }
-    void setValue(const T& value)
+    void setValue(const T& value) override
     {
-
-        settings->beginGroup(group);
-        settings->setValue(this->name,value);
-        settings->sync();
-        settings->endGroup();
+        settings.beginGroup(group);
+        settings.setValue(this->name,value);
+        settings.sync();
+        settings.endGroup();
     }
 };
-
-class Config : public Singleton<Config>
-{
-
-public:
-    Config():Singleton<Config>()
-    {
-        if (!settings)
-        {
-            settings.reset( new QSettings() );
-        }
-
-    }
-    PROPERTY(int,posx);
-    PROPERTY(int,posy);
-   // GROUPED_PROPERTY(QString,db,dbHost,"Hello world%");
-
-};
-
-#define Conf Config::instance()
 
 #endif // CONFIG_H

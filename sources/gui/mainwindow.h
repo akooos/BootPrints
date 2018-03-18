@@ -2,16 +2,28 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-
+#include <QCloseEvent>
 #include <ui_mainwindow.h>
 #include "common.h"
 #include "config.h"
 #include "uiplugin.h"
+#include <singleton.h>
+#include <core.h>
 
+#define GUI_APP_NAME "bootprints-qtui"
 
 class MainWindow : public QMainWindow, public UIPlugin
 {
     Q_OBJECT
+
+    struct Config : Singleton<Config>{
+        CONFIG_GROUP(GUI_APP_NAME)
+        CONFIG_PROPERTY(QByteArray,geometry)
+        CONFIG_PROPERTY(QByteArray,windowState)
+        CONFIG_PROPERTY(QDateTime,previousStartupDateTime)
+        CONFIG_PROPERTY(QDateTime,previousShutdownDateTime)
+
+    };
 
 public:
     explicit MainWindow(QWidget *parent = 0);
@@ -20,7 +32,13 @@ public:
     virtual const QIcon & appIcon() const;
     virtual const QActionPtr actionClose() const;
 
-private:    
+
+protected:
+    virtual void closeEvent(QCloseEvent *event) override;
+private:
+
+    BootPrints::Core core;
+
     Ui::MainWindow  ui;
 
     QIcon   iconAppMain;
@@ -30,6 +48,10 @@ private:
 
     void createTrayIcon();
     void createActions();
+    void loadPlugins();
+    void loadConfig();
+    void saveConfig();
+    void setDefaultConfig();
 private slots:
     void onActionClose(bool);
 

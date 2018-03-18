@@ -5,17 +5,18 @@
 #include <QDir>
 
 #include <plugin.h>
-
-using namespace BootPrints::Interfaces;
+#include "exception.h"
 
 namespace BootPrints {
     class Core
     {
-        QHash<QString,BasePlugin*>  plugins;
+        typedef QHash<QString,BootPrints::Interfaces::BasePlugin*> PluginHashMap;
+        PluginHashMap plugins;
     public:
         Core();
-        void addPlugin(const QString &name, BasePlugin *plugin);
-        void loadPlugins(const QDir &pluginsDir);
+        void addPlugin(const QString &name, BootPrints::Interfaces::BasePlugin *plugin);
+        QStringList addPlugins(const QDir &pluginsDir);
+        void initPlugins();
     };
 }
 
