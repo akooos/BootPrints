@@ -1,15 +1,15 @@
-#include "trayicon.h"
+#include "filesystemwatcher.h"
 
 
 #include <QMessageBox>
 
 
-TrayIcon::TrayIcon(QObject *parent):QObject(parent),ui(nullptr)
+FilesystemWatcher::FilesystemWatcher(QObject *parent):QObject(parent),ui(nullptr)
 {
     systemTrayIcon.setContextMenu(&menu);
 }
 
-void TrayIcon::init(QHash<QString, BasePlugin *> deps )
+void FilesystemWatcher::init(QHash<QString, BasePlugin *> deps )
 {
     if (!QSystemTrayIcon::isSystemTrayAvailable()) {
         QMessageBox::critical(0, QObject::tr("Systray"),
@@ -62,11 +62,11 @@ void TrayIcon::init(QHash<QString, BasePlugin *> deps )
     Q_UNUSED(checker);
 }
 
-void TrayIcon::dispose()
+void FilesystemWatcher::dispose()
 {
     ui = nullptr;
 }
-void TrayIcon::onSystemTrayActivated(QSystemTrayIcon::ActivationReason reason)
+void FilesystemWatcher::onSystemTrayActivated(QSystemTrayIcon::ActivationReason reason)
 {
     switch (reason) {
         case QSystemTrayIcon::Trigger:

@@ -30,7 +30,8 @@ SOURCES += \
 
 HEADERS += \
     mainwindow.h \
-    uiplugin.h
+    uiplugin.h \
+    qtconfigui.h
 
 INCLUDEPATH += \
     ../patterns \

@@ -3,7 +3,7 @@
 
 int main(int argc, char *argv[])
 {
-    DEBUG_MSG("Starting application.")
+    DEBUG_MSG("Starting application." << BootPrints::sccs_version )
     Q_INIT_RESOURCE(icons);
 
     QApplication::setOrganizationName(BootPrints::org_name);

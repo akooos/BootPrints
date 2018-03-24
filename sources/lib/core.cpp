@@ -3,8 +3,6 @@
 
 #include <QPluginLoader>
 
-
-
 BootPrints::Core::Core()
 {
 
@@ -36,7 +34,6 @@ void BootPrints::Core::initPlugins()
             //TODO for now pass everything
             bootprints_plugin->init(plugins);
         }
-
     }
 }
 

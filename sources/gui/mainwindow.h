@@ -10,28 +10,29 @@
 #include <singleton.h>
 #include <core.h>
 
-#define GUI_APP_NAME "bootprints-qtui"
+namespace  {
+    extern char const gui_app_name[] = "bootprints-qtui";
+}
 
 class MainWindow : public QMainWindow, public UIPlugin
 {
     Q_OBJECT
 
-    struct Config : Singleton<Config>{
-        CONFIG_GROUP(GUI_APP_NAME)
+    struct Config : BootPrints::Config<gui_app_name>, Singleton<Config>
+    {
         CONFIG_PROPERTY(QByteArray,geometry)
         CONFIG_PROPERTY(QByteArray,windowState)
         CONFIG_PROPERTY(QDateTime,previousStartupDateTime)
         CONFIG_PROPERTY(QDateTime,previousShutdownDateTime)
-
     };
 
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-
+// --- U I  P l u g i n implementation ---
     virtual const QIcon & appIcon() const;
     virtual const QActionPtr actionClose() const;
-
+//---------------------------------------
 
 protected:
     virtual void closeEvent(QCloseEvent *event) override;

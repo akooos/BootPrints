@@ -61,11 +61,11 @@ void MainWindow::loadPlugins()
    DEBUG_MSG("Loading plugins from:" << pluginsDir.absolutePath() )
   try{
        QStringList lsProblems = core.addPlugins(pluginsDir);
-       core.addPlugin(GUI_APP_NAME,this);
+       core.addPlugin(gui_app_name,this);
        core.initPlugins();
    } catch(BootPrints::Exception exception)
    {
-     QMessageBox::critical(0, QObject::tr(GUI_APP_NAME),
+     QMessageBox::critical(0, QObject::tr(gui_app_name),
                              exception.toString()
                            );
 

@@ -2,11 +2,15 @@ TEMPLATE = subdirs
 
 SUBDIRS += \
     lib \
+    filesystemwatcher \
     gallerymanager \
     trayicon \
-    gui
+    gui \
 
 lib.subdir= sources/lib
+
+filesystemwatcher.subdir = sources/plugins/filesystemwatcher
+filesystemwatcher.depends = lib
 
 gallerymanager.subdir = sources/plugins/gallerymanager
 gallerymanager.depends = lib

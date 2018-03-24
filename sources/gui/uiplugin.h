@@ -3,12 +3,14 @@
 
 #include <QAction>
 #include <QSharedPointer>
-
+#include <QWidget>
 #include <plugin.h>
+
 
 using namespace BootPrints::Interfaces;
 
 typedef QSharedPointer<QAction> QActionPtr;
+
 
 struct UIPlugin : BasePlugin
 {

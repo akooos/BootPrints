@@ -12,12 +12,10 @@ QMAKE_CXXFLAGS += -std=c++17
 # deprecated API in order to know how to port your code away from it.
 DEFINES += QT_DEPRECATED_WARNINGS
 
-SOURCES += mediadb.cpp \
-           mediaitem.cpp
+SOURCES += mediadb.cpp
 
 HEADERS += mediadb.h \
-           dbmanager.h \
-           mediaitem.h
+           dbmanager.h
 
 INCLUDEPATH += ../../patterns \
                ../../lib \

@@ -3,24 +3,21 @@ CONFIG += staticlib
 
 TARGET = BootPrintsCore
 
-#version.target = version.h
-#version.depends = FORCE
-#version.commands = git describe --always
-#PRE_TARGETDEPS += version.h
-#QMAKE_EXTRA_TARGETS += version
+DEFINES += GIT_VERSION='$(shell git describe --always)'
 
 HEADERS += \
     config.h \
     common.h \
+    mediaitem.h \
     interfaces/gallerymanager.h \
     interfaces/share.h \
     interfaces/plugin.h \
-    version.h \
     exception.h \
-    version.h \
-    core.h
+    core.h \
+    interfaces/configui.h
 
 SOURCES += \
+    mediaitem.cpp \
     core.cpp
 
 INCLUDEPATH += \

@@ -2,6 +2,7 @@
 #define MEDIADB_H
 
 #include <mediaitem.h>
+#include <QFile>
 
 class MediaDB
 {

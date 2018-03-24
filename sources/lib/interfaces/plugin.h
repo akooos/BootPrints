@@ -4,9 +4,7 @@
 #include <QtPlugin>
 #include <QHash>
 
-namespace BootPrints{
-
-  namespace Interfaces {
+namespace BootPrints::Interfaces{
 
     struct BasePlugin {
         virtual ~BasePlugin() = default;
@@ -16,7 +14,6 @@ namespace BootPrints{
        virtual void init( QHash<QString,BasePlugin*> deps ) = 0;
        virtual void dispose() = 0;
     };
-  }
 }
 #define Plugin_iid "org.Akooos.BootPrints.Plugin"
 Q_DECLARE_INTERFACE(BootPrints::Interfaces::Plugin, Plugin_iid)
