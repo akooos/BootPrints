@@ -16,17 +16,17 @@ namespace  {
 
 class MainWindow : public QMainWindow, public UIPlugin
 {
-    Q_OBJECT
+   Q_OBJECT
 
-    struct Config : BootPrints::Config<gui_app_name>, Singleton<Config>
-    {
-        CONFIG_PROPERTY(QByteArray,geometry)
-        CONFIG_PROPERTY(QByteArray,windowState)
-        CONFIG_PROPERTY(QDateTime,previousStartupDateTime)
-        CONFIG_PROPERTY(QDateTime,previousShutdownDateTime)
-    };
+  struct Config : BootPrints::Config<gui_app_name>, Singleton<Config>
+  {
+     CONFIG_PROPERTY(QByteArray,geometry)
+     CONFIG_PROPERTY(QByteArray,windowState)
+     CONFIG_PROPERTY(QDateTime,previousStartupDateTime)
+     CONFIG_PROPERTY(QDateTime,previousShutdownDateTime)
+  };
 
-public:
+  public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 // --- U I  P l u g i n implementation ---
@@ -34,9 +34,9 @@ public:
     virtual const QActionPtr actionClose() const;
 //---------------------------------------
 
-protected:
+  protected:
     virtual void closeEvent(QCloseEvent *event) override;
-private:
+  private:
 
     BootPrints::Core core;
 
@@ -53,7 +53,7 @@ private:
     void loadConfig();
     void saveConfig();
     void setDefaultConfig();
-private slots:
+  private slots:
     void onActionClose(bool);
 
 };

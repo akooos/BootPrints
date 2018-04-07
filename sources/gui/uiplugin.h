@@ -18,5 +18,5 @@ struct UIPlugin : BasePlugin
     virtual const QActionPtr actionClose() const = 0;
 
 };
-#define UIPlugin_iid "org."
+
 #endif // UIPLUGIN_H

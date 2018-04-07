@@ -12,11 +12,11 @@ class DBManager :public QObject, GalleryManager
     Q_PLUGIN_METADATA(IID GalleryManager_iid FILE "gallerymanager.json")
     Q_INTERFACES(BootPrints::Interfaces::Plugin  BootPrints::Interfaces::GalleryManager )
 public:
-    DBManager(QObject *parent = 0)
+    DBManager(QObject *parent = 0) : QObject(parent)
     {
 
     }
-    void init( QHash<QString,BasePlugin*> deps ) override
+    void init( CorePtr core, QHash<QString,BasePlugin*> deps ) override
     {
 
     }

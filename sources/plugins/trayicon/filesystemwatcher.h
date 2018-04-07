@@ -21,7 +21,7 @@ class FilesystemWatcher : public QObject, Plugin
 
 public:
     FilesystemWatcher(QObject *parent = 0);
-    void init( QHash<QString,BasePlugin*> deps ) override;
+    void init(CorePtr core, QHash<QString,BasePlugin*> deps ) override;
     void dispose() override;
 private slots:
     void onSystemTrayActivated(QSystemTrayIcon::ActivationReason);

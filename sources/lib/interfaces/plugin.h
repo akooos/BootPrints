@@ -4,14 +4,16 @@
 #include <QtPlugin>
 #include <QHash>
 
-namespace BootPrints::Interfaces{
+#include <internal.h>
 
+namespace BootPrints::Interfaces
+{
     struct BasePlugin {
         virtual ~BasePlugin() = default;
     };
 
     struct Plugin : BasePlugin {
-       virtual void init( QHash<QString,BasePlugin*> deps ) = 0;
+       virtual void init(CorePtr core, QHash<QString,BasePlugin*> deps ) = 0;
        virtual void dispose() = 0;
     };
 }

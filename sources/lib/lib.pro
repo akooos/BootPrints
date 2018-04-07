@@ -14,7 +14,8 @@ HEADERS += \
     interfaces/plugin.h \
     exception.h \
     core.h \
-    interfaces/configui.h
+    interfaces/configui.h \
+    interfaces/internal.h
 
 SOURCES += \
     mediaitem.cpp \

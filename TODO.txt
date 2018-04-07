@@ -1,16 +1,39 @@
 TODO
 ====
------
-   pluginek nem kell az összes többi plugint látnia: csak a függőségeit
-------
-FolderShare plugin
-feladata:
-    egy vagy több mappa figyelése; új média fájl esetén signal "newMediaItemCaught" küldése
-------------
-Share (vagy csak ShareReceiver) plugin interface
-feladata:
-    interface a media megosztások fogadásához
----
+    - extend gallerymanager interface with const QString & displayName() method;
+    - FileSystemWatcher plugin
+        - FileSystemWatcher to watch for filesystemChanges
+        - Calculate file hash
+        - Emit signal when file added ( newmediaItemReceived signal)
+    - Organizer plugin
+        - Triggered on newMediaItemReceived signal
+        - get media meta data
+        - fix extension, when does not match file type
+        - move media item to different folder (arrange by date)
+        - add to gallery
+        *- scan folder for changes(same what fileystemwatcher watches)
+    - Gallery Manager
+        - design db layout
+        - implement methods: put, add, remove, exists etc.
+    - GUI:
+        - ui written with QML2
+        - custom widget for viewing images, videos
+        - reads all galleries
+        *- qml to c++ convert
+    - Notification
+        - declare interface
+        Options:
+        * Copy custom widgets from old project "BZFriends"
+        * WinToast (only for Win8 and up)
+    - Log
+        - declare interface for error, warning, info, messages
+        Options:
+        * log to windows events
+        * log to just file
+        * ...
+    - One plugin should see only its dependencies
+    - TrayIcon plugin: clicking on it should change visibility of mainwindow
+--------
 GalleryManager plugin interface
 feladata:
     *- offset, és limitálható querizése a galériáknak
@@ -32,10 +55,6 @@ feladat:
 MediaViewer plugin interface
 -> lenne egy QWidget * widget() metódus,
 amiben egyedi kép/videó nézegető felületet lehetne készíteni
---------
-ConfigUI plugin interface
--> lenne egy QWidget * widget() metódus, amiben
-saját grafikus konfigurációs felületet lehetne csinálni a pluginoknak
 ---------------------
   UIPlugin interface
   feladata: arra való hogy a beépített erőforrásokat,
@@ -75,6 +94,4 @@ Q_DECLARE_INTERFACE(BootPrints::Interfaces::Plugin, Plugin_iid)
 <- nem lehetséges a preprocessor miatt .-okkal ősszefűzve nem preprocessor azonosító
 <- constexpr lehetséges?!
 -----------
-VERSION.h nem generálódik.
-cél: git revision szám beírása a buildbe
--> fix
+

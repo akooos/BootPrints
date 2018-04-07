@@ -9,7 +9,7 @@ FilesystemWatcher::FilesystemWatcher(QObject *parent):QObject(parent),ui(nullptr
     systemTrayIcon.setContextMenu(&menu);
 }
 
-void FilesystemWatcher::init(QHash<QString, BasePlugin *> deps )
+void FilesystemWatcher::init(CorePtr core, QHash<QString, BasePlugin *> deps )
 {
     if (!QSystemTrayIcon::isSystemTrayAvailable()) {
         QMessageBox::critical(0, QObject::tr("Systray"),

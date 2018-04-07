@@ -1,7 +1,8 @@
 
 #include "core.h"
-
+#include <interfaces/internal.h>
 #include <QPluginLoader>
+
 
 BootPrints::Core::Core()
 {
@@ -23,6 +24,8 @@ void BootPrints::Core::addPlugin(const QString &name, BootPrints::Interfaces::Ba
 
 void BootPrints::Core::initPlugins()
 {
+    auto core = std::make_shared<BootPrints::Core>(*this);
+
     DEBUG_MSG("Nr of plugins to be initialized:" << plugins.size())
     for ( PluginHashMap::const_iterator it = plugins.begin(); it != plugins.end();++it)
     {
@@ -32,8 +35,16 @@ void BootPrints::Core::initPlugins()
         if (bootprints_plugin)
         {
             //TODO for now pass everything
-            bootprints_plugin->init(plugins);
+            bootprints_plugin->init(core,plugins);
         }
+    }
+}
+
+void BootPrints::Core::addNewMediaItem( MediaItem mi )
+{
+    for ( auto item : newMediaItemSignalListeners )
+    {
+
     }
 }
 
@@ -84,7 +95,7 @@ QStringList BootPrints::Core::addPlugins(const QDir &pluginsDir)
         } else{
         BootPrints::Exception e = BootPrints::Exception(
             BootPrints::ExceptionCodes::CannotAddPluginError,
-            {fileName,"Casting to internal interface(QObject) failed."}
+            {fileName,"Could not instantiate plugin. Error string:" + pluginLoader.errorString()}
         );
         DEBUG_MSG(e.toString())
         lsProblems.append(e.toString());

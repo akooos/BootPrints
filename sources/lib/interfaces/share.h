@@ -6,20 +6,13 @@
 
 namespace BootPrints::Interfaces
 {
-    class ShareReceived : public QObject, public Plugin
+    struct MediaItemReceived : public Plugin
     {
-        Q_OBJECT
-    public:
-        ShareReceived(QObject *parent = 0):QObject(parent)
-        {
-
-        }
-      signals:
-        virtual void newShareReceived(MediaItem file);
+        virtual void newMediaItemReceived(MediaItem file);
     };
 }
 
-#define ShareReceived_iid "org.Akooos.BootPrints.ShareReceived"
-Q_DECLARE_INTERFACE(BootPrints::Interfaces::ShareReceived, ShareReceived_iid)
+#define MediaItemReceived_iid "org.Akooos.BootPrints.MediaItemReceived"
+Q_DECLARE_INTERFACE(BootPrints::Interfaces::MediaItemReceived, MediaItemReceived_iid)
 
 #endif // SHARE_H
