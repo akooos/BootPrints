@@ -29,3 +29,8 @@ void MediaItem::setFile(const QString &value)
     this->fp.setPath(value);
 }
 
+const QByteArray &MediaItem::hash() const
+{
+    return sumhash;
+}
+

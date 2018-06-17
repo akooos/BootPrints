@@ -61,5 +61,6 @@ namespace BootPrints{
    static const char * sccs_version = STRINGIFY(GIT_VERSION);
 
 }
+#include "exception.h"
 #endif // COMMON_H
 

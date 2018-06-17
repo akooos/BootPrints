@@ -2,57 +2,144 @@
 #include "core.h"
 #include <interfaces/internal.h>
 #include <QPluginLoader>
+#include "share.h"
+#include "mediaitem.h"
+#include "plugin.h"
+#include "internal.h"
+
+using namespace BootPrints;
 
 
-BootPrints::Core::Core()
+Core::Core( QObject *parent)
+    : QObject(parent)
 {
 
 }
 
-void BootPrints::Core::addPlugin(const QString &name, BootPrints::Interfaces::BasePlugin *plugin)
+void Core::disposePlugins()
+{
+    //TODO dispose plugins as dependecies requires.
+    for ( auto it = plugins.begin(); it != plugins.end();++it)
+    {
+        Interfaces::Plugin *bootprints_plugin = it.value()->getPluginPtr();
+        if (bootprints_plugin)
+        {
+            DEBUG_MSG("Dispose plugin:" << it.key())
+            bootprints_plugin->dispose();
+        }else
+        {
+            DEBUG_MSG("Cannot dispose null ptr to plugin!")
+        }
+    }
+
+    plugins.clear();
+}
+
+DispatcherSPtr Core::createDispatcher(Interfaces::Plugin *plugin, const QJsonObject & metaData)
+{
+    return  QSharedPointer<Dispatcher>( new Dispatcher(plugin,metaData) );
+}
+
+void Core::initializeDispatcher(DispatcherSPtr dispatcher)
+{
+    bool checker = QObject::connect(dispatcher.data(),SIGNAL(newShare(QUrl)),this,SLOT(onNewShare(QUrl)));
+
+    Q_ASSERT(checker);
+
+    checker = QObject::connect(dispatcher.data(),SIGNAL(newSubscriptionForShare(QString)),this,SLOT(onNewSubscribeForShare(QString)));
+
+    Q_ASSERT(checker);
+
+    Q_UNUSED(checker);
+}
+
+void Core::onNewShare(const QUrl &url)
+{
+    Dispatcher *dispatcher = qobject_cast<Dispatcher*> ( QObject::sender() );
+
+    if ( !dispatcher )
+    {
+        DEBUG_MSG("dispatcher is NULL ptr!");
+        return;
+    }
+
+    QList<Interfaces::Share *> ls = shareSubscriptions.values(dispatcher->getPluginPtr());
+    for (Interfaces::Share * share : ls )
+    {
+        share->newShareReceived(url);
+    }
+}
+
+void Core::onNewSubscribeForShare(const QString &pluginName)
+{
+    Dispatcher *who = qobject_cast<Dispatcher*> ( QObject::sender() );
+    Dispatcher *toWhat = plugins.value(pluginName,nullptr).data();
+    if ( !toWhat )
+    {
+        DEBUG_MSG("Unknown subscription!");
+        return;
+    }
+    if ( !who )
+    {
+        DEBUG_MSG("Unknown subscriber!");
+        return;
+    }
+
+    Interfaces::Share *share = dynamic_cast<Interfaces::Share*>(who->getPluginPtr());
+
+    if ( !who )
+    {
+        DEBUG_MSG("Subscriber does not implement proper interface!");
+        return;
+    }
+
+    who = dynamic_cast<Dispatcher*>(toWhat);
+
+    shareSubscriptions.insert(who->getPluginPtr(),share);
+}
+
+void Core::addPlugin(const QString &name, Interfaces::Plugin *plugin, QJsonObject metaData)
 {
    auto it = plugins.find(name);
 
    if ( it != plugins.end() )
    {
-       BootPrints::Exception::fail( BootPrints::ExceptionCodes::CannotAddPluginError, {name, "Already exists" });
-       return;
+       Exception::fail( ExceptionCodes::CannotAddPluginError, {name, "Already exists" });
    }
-   plugins.insert(name,plugin);
+
+   DispatcherSPtr dispatcherSPtr = createDispatcher(plugin,metaData);
+   initializeDispatcher(dispatcherSPtr);
+   plugins.insert(name,dispatcherSPtr);
    DEBUG_MSG("Plugin added:" << name);
 }
 
-void BootPrints::Core::initPlugins()
-{
-    auto core = std::make_shared<BootPrints::Core>(*this);
 
-    DEBUG_MSG("Nr of plugins to be initialized:" << plugins.size())
-    for ( PluginHashMap::const_iterator it = plugins.begin(); it != plugins.end();++it)
+void Core::initPlugins()
+{
+    for ( auto it = plugins.begin(); it != plugins.end();++it)
     {
-        DEBUG_MSG("Initialize plugin:" << it.key())
-        BootPrints::Interfaces::BasePlugin *bp = *it;
-        BootPrints::Interfaces::Plugin *bootprints_plugin = dynamic_cast<BootPrints::Interfaces::Plugin*>(bp);
+        Interfaces::Plugin *bootprints_plugin = it.value()->getPluginPtr();
         if (bootprints_plugin)
         {
+            DEBUG_MSG("Initialize plugin:" << it.key())
             //TODO for now pass everything
-            bootprints_plugin->init(core,plugins);
+            bootprints_plugin->init(it.value().data());
         }
     }
 }
 
-void BootPrints::Core::addNewMediaItem( MediaItem mi )
-{
-    for ( auto item : newMediaItemSignalListeners )
-    {
-
-    }
-}
-
-QStringList BootPrints::Core::addPlugins(const QDir &pluginsDir)
+QStringList Core::addPlugins(const QDir &pluginsDir)
 {
     QStringList lsProblems;
 
+#ifdef __linux__
     const QStringList nameFilters = {"*.so"};
+#elif defined(_WIN32)
+    const QStringList nameFilters = {"*.dll"};
+#else
+#warning "Could not get OS type!"
+    const QStringList nameFilters = {"*.so"};
+#endif
 
     for (const QString &fileName : pluginsDir.entryList( nameFilters, QDir::Files) )
     {
@@ -60,8 +147,8 @@ QStringList BootPrints::Core::addPlugins(const QDir &pluginsDir)
         QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
         const auto metadata = pluginLoader.metaData().value("MetaData").toObject();
         if ( !metadata.contains("name") ){
-            BootPrints::Exception e = BootPrints::Exception(
-                BootPrints::ExceptionCodes::CannotAddPluginError,
+            Exception e = Exception(
+                ExceptionCodes::CannotAddPluginError,
                 {fileName,"No name property was given in internal JSON data."}
             );
             DEBUG_MSG(e.toString())
@@ -71,13 +158,13 @@ QStringList BootPrints::Core::addPlugins(const QDir &pluginsDir)
         QObject *plugin = pluginLoader.instance();
         if (plugin)
         {
-          BootPrints::Interfaces::Plugin *bootprints_plugin = qobject_cast<BootPrints::Interfaces::Plugin *>(plugin);
+          Interfaces::Plugin *bootprints_plugin = qobject_cast<Interfaces::Plugin *>(plugin);
           if (bootprints_plugin )
           {
              QString pluginName = metadata.value("name").toString();
              try{
-                addPlugin(pluginName,bootprints_plugin);
-             }catch(BootPrints::Exception e)
+                addPlugin(pluginName,bootprints_plugin,metadata);
+             }catch(Exception e)
              {
                  DEBUG_MSG(e.toString())
                  lsProblems.append(e.toString());
@@ -85,16 +172,16 @@ QStringList BootPrints::Core::addPlugins(const QDir &pluginsDir)
              continue;
           } else
           {
-              BootPrints::Exception e = BootPrints::Exception(
-                  BootPrints::ExceptionCodes::CannotAddPluginError,
+              Exception e = Exception(
+                  ExceptionCodes::CannotAddPluginError,
                   {fileName,"Casting to internal interface(Plugin) failed."}
               );
               DEBUG_MSG(e.toString())
               lsProblems.append(e.toString());
           }
         } else{
-        BootPrints::Exception e = BootPrints::Exception(
-            BootPrints::ExceptionCodes::CannotAddPluginError,
+        Exception e = Exception(
+            ExceptionCodes::CannotAddPluginError,
             {fileName,"Could not instantiate plugin. Error string:" + pluginLoader.errorString()}
         );
         DEBUG_MSG(e.toString())
@@ -104,3 +191,4 @@ QStringList BootPrints::Core::addPlugins(const QDir &pluginsDir)
 
     return lsProblems;
 }
+

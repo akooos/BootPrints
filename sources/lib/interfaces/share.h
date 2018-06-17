@@ -2,17 +2,18 @@
 #define SHARE_H
 
 #include "plugin.h"
-#include "mediaitem.h"
+
+class QUrl;
 
 namespace BootPrints::Interfaces
 {
-    struct MediaItemReceived : public Plugin
+    struct Share : public Plugin
     {
-        virtual void newMediaItemReceived(MediaItem file);
+        virtual void newShareReceived(const QUrl &url) = 0 ;
     };
 }
 
-#define MediaItemReceived_iid "org.Akooos.BootPrints.MediaItemReceived"
-Q_DECLARE_INTERFACE(BootPrints::Interfaces::MediaItemReceived, MediaItemReceived_iid)
+#define Share_iid "org.Akooos.BootPrints.Share"
+Q_DECLARE_INTERFACE(BootPrints::Interfaces::Share, Share_iid)
 
 #endif // SHARE_H

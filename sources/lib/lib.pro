@@ -1,3 +1,4 @@
+QT       += core
 TEMPLATE = lib
 CONFIG += staticlib
 
@@ -15,11 +16,13 @@ HEADERS += \
     exception.h \
     core.h \
     interfaces/configui.h \
-    interfaces/internal.h
+    interfaces/internal.h \
+    dispatcher.h
 
 SOURCES += \
     mediaitem.cpp \
-    core.cpp
+    core.cpp \
+    dispatcher.cpp
 
 INCLUDEPATH += \
     interfaces

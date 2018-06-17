@@ -2,7 +2,7 @@ TARGET = TrayIcon
 
 TEMPLATE = lib
 
-QT += core widgets sql
+QT += core widgets
 
 CONFIG += plugin c++17
 QMAKE_CXXFLAGS += -std=c++17
@@ -35,20 +35,25 @@ else {
     DESTDIR = $${BUILD_DIR}/release
 }
 
-DESTDIR = $${DESTDIR}_$${QMAKE_HOST.os}_$${QMAKE_HOST.arch}/plugins
+
+HEADERS += \
+    trayicon.h
+
+SOURCES += \
+    trayicon.cpp
+
+OTHER_FILES = \
+    $$lower($${TARGET}).json
+
+CORE_DESTDIR = $${DESTDIR}_$${QMAKE_HOST.os}_$${QMAKE_HOST.arch}
+
+DESTDIR = $${CORE_DESTDIR}/plugins
 
 OTHERS_DEST_DIR = $$DESTDIR/$${TARGET}_parts
-
 OBJECTS_DIR = $${OTHERS_DEST_DIR}/objs
 MOC_DIR = $${OTHERS_DEST_DIR}/mocs
 RCC_DIR = $${OTHERS_DEST_DIR}/rccs
 UI_DIR = $${OTHERS_DEST_DIR}/uis
 
-HEADERS += \
-    filesystemwatcher.h
-
-SOURCES += \
-    filesystemwatcher.cpp
-
-OTHER_FILES = \
-    $$lower($${TARGET}).json
+#add core dependecy
+LIBS += -L$$CORE_DESTDIR -lBootPrintsCore

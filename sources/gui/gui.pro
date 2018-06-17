@@ -26,12 +26,16 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    bootprintsqt.cpp \
+    dispatcherqt.cpp
 
 HEADERS += \
     mainwindow.h \
-    uiplugin.h \
-    qtconfigui.h
+    qtconfigui.h \
+    uiinternal.h \
+    bootprintsqt.h \
+    dispatcherqt.h
 
 INCLUDEPATH += \
     ../patterns \

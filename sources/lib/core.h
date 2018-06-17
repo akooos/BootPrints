@@ -1,31 +1,47 @@
 #ifndef BOOTPRINTS_H
 #define BOOTPRINTS_H
 
-#include <QHash>
+#include <QMultiHash>
 #include <QDir>
 #include <QVector>
 
-#include <plugin.h>
+#include <share.h>
+#include <mediaitem.h>
+
+#include <internal.h>
 #include "exception.h"
 
-#include <mediaitem.h>
+#include <dispatcher.h>
+
+#include <functional>
+
+using DispatcherCtor = std::function<DispatcherSPtr(BootPrints::Interfaces::Plugin* plugin,const QJsonObject &metaData)>;
 
 namespace BootPrints
 {
-    class Core : public BootPrints::Interfaces::Internal
+    class Core : public QObject
     {
-        typedef QHash<QString,BootPrints::Interfaces::BasePlugin*> PluginHashMap;
-        PluginHashMap plugins;
+        Q_OBJECT
 
-        QVector<BootPrints::Interfaces::Plugin*> newMediaItemSignalListeners;
+        QHash<QString,DispatcherSPtr> plugins;
 
-      public:
-        Core();
-        void addPlugin(const QString &name, BootPrints::Interfaces::BasePlugin *plugin);
+        QMultiHash<BootPrints::Interfaces::Plugin*,BootPrints::Interfaces::Share*> shareSubscriptions;
+        void addPlugin(const QString &name, BootPrints::Interfaces::Plugin *plugin, QJsonObject metaData);
+     public:
+
+        Core( QObject *parent = 0 );
+
         QStringList addPlugins(const QDir &pluginsDir);
         void initPlugins();
+        void disposePlugins();
 
-        void addNewMediaItem( MediaItem mi );
+      protected:
+        virtual DispatcherSPtr createDispatcher(Interfaces::Plugin *plugin, const QJsonObject &metaData);
+        virtual void initializeDispatcher(DispatcherSPtr dispatcher);
+
+      private slots:
+        void onNewSubscribeForShare(const QString &pluginName);
+        void onNewShare(const QUrl &url);
     };
 }
 

@@ -1,11 +1,13 @@
 TEMPLATE = subdirs
+# build the project sequentially as listed in SUBDIRS !
+CONFIG += ordered
 
 SUBDIRS += \
     lib \
     filesystemwatcher \
     gallerymanager \
     trayicon \
-    gui \
+    gui
 
 lib.subdir= sources/lib
 
@@ -25,5 +27,4 @@ OTHER_FILES += \
     README.md \
     TODO.txt
 
-# build the project sequentially as listed in SUBDIRS !
-CONFIG += ordered
+

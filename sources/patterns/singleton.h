@@ -10,27 +10,28 @@
  *  @brief Template of the Singleton programming pattern.
  *  @author Ákos Tóth
  */
-template <class T>
+template <class T, typename ...TArgs>
 class Singleton
 {
-      static std::unique_ptr<T> m_instance;
-
-   protected:
-      Singleton()
-      {
-
-      }
-
+     static std::unique_ptr<T> _instance;
    public:
 
-      static T & instance()
+      static T & create(TArgs...args)
       {
-          if( !m_instance )
+          if( !_instance )
           {
-              m_instance.reset( new T() );
+              _instance.reset( new T(args...) );
           }
-          return *m_instance;
+          return *_instance;
       }
+
+      static T& instance()
+      {
+          return *_instance;
+      }
+   protected:
+      Singleton(){}
+   private:
 
       Singleton(const Singleton &) = delete;
       Singleton(const Singleton &&) = delete;
@@ -38,7 +39,7 @@ class Singleton
       Singleton &operator=(const Singleton &&) = delete;
 };
 
-template <class T>
-std::unique_ptr<T> Singleton<T>::m_instance = nullptr;
+template <class T, typename ...TArgs>
+std::unique_ptr<T> Singleton<T,TArgs...>::_instance = nullptr;
 
 #endif // SINGLETON_H

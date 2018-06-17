@@ -1,15 +1,21 @@
-#include "filesystemwatcher.h"
+#include "trayicon.h"
 
 
 #include <QMessageBox>
 
+#include <internal.h>
+#include <uiinternal.h>
 
-FilesystemWatcher::FilesystemWatcher(QObject *parent):QObject(parent),ui(nullptr)
+TrayIcon::TrayIcon(
+        QObject *parent
+):QObject(parent),
+    ui(nullptr),
+    actionClose(QIcon::fromTheme("application-exit"), tr("Close"), this )
 {
     systemTrayIcon.setContextMenu(&menu);
 }
 
-void FilesystemWatcher::init(CorePtr core, QHash<QString, BasePlugin *> deps )
+void TrayIcon::init(BootPrints::Interfaces::Internal *core)
 {
     if (!QSystemTrayIcon::isSystemTrayAvailable()) {
         QMessageBox::critical(0, QObject::tr("Systray"),
@@ -18,23 +24,14 @@ void FilesystemWatcher::init(CorePtr core, QHash<QString, BasePlugin *> deps )
         return;
     }
 
-    auto it = deps.find("bootprints-qtui");
-    if ( it == deps.end() )
-    {
-        QMessageBox::critical(0, QObject::tr("Systray"),
-                              QObject::tr("Bootprints Qt UI does not run!"));
-        return;
-    }
-
-    auto *ptr = *it;
-    if ( !ptr )
+    if ( !core )
     {
         QMessageBox::critical(0, QObject::tr("Systray"),
                               QObject::tr("Bootprints Qt UI does not run?! Empty pointer."));
         return;
     }
 
-     ui = dynamic_cast<UIPlugin*> (ptr);
+     ui = dynamic_cast< UIInternal * > (core);
 
     if ( !ui )
     {
@@ -45,7 +42,8 @@ void FilesystemWatcher::init(CorePtr core, QHash<QString, BasePlugin *> deps )
 
     QList<QAction*> actions;
 
-    actions.append( ui->actionClose().data());
+    actions.append(&actionClose);
+
     menu.addActions(actions);
     systemTrayIcon.setIcon(ui->appIcon());
     systemTrayIcon.setVisible(true);
@@ -60,13 +58,14 @@ void FilesystemWatcher::init(CorePtr core, QHash<QString, BasePlugin *> deps )
     Q_ASSERT(checker);
 
     Q_UNUSED(checker);
+
 }
 
-void FilesystemWatcher::dispose()
+void TrayIcon::dispose()
 {
     ui = nullptr;
 }
-void FilesystemWatcher::onSystemTrayActivated(QSystemTrayIcon::ActivationReason reason)
+void TrayIcon::onSystemTrayActivated(QSystemTrayIcon::ActivationReason reason)
 {
     switch (reason) {
         case QSystemTrayIcon::Trigger:

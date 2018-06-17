@@ -3,7 +3,7 @@
 
 #include <gallerymanager.h>
 #include <QtPlugin>
-
+#include "internal.h"
 using namespace BootPrints::Interfaces;
 
 class DBManager :public QObject, GalleryManager
@@ -16,7 +16,7 @@ public:
     {
 
     }
-    void init( CorePtr core, QHash<QString,BasePlugin*> deps ) override
+    void init( BootPrints::Interfaces::Internal *core) override
     {
 
     }

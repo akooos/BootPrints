@@ -1,34 +1,48 @@
-#include "filesystemwatcher.h"
+
+#include <QCryptographicHash>
+#include <QDir>
+#include <QDirIterator>
+#include <QFileInfo>
+#include <QFile>
+#include <QByteArray>
+#include <QThread>
 
 #include <interfaces/internal.h>
+#include <mediaitem.h>
 
-FilesystemWatcher::FilesystemWatcher(QObject *parent):QObject(parent)
+#include "filesystemwatcher.h"
+
+FileSystemWatcher::FileSystemWatcher(QObject *parent):QObject(parent),core(nullptr),extFilters(defFileExtensionWatchList)
 {
-}
-void FilesystemWatcher::init(CorePtr core, QHash<QString,BasePlugin*> deps )
-{
-    this->core = core;
-    Q_UNUSED(deps)
-    watcher.addPaths(config.watchList);
 
     bool checker = QObject::connect(
                              &watcher,
-                             SIGNAL(fileChanged(QString)),
+                             SIGNAL(directoryChanged(QString)),
                              this,
-                             SLOT(onFileChanged(QString))
+                             SLOT(onDirectoryChanged(QString))
                 );
 
     Q_ASSERT(checker);
 
     Q_UNUSED(checker);
 }
-void FilesystemWatcher::dispose()
+void FileSystemWatcher::init(BootPrints::Interfaces::Internal *core)
+{
+    this->core = core;
+
+    extFilters = config.fileExtensionWatchList.value( defFileExtensionWatchList ).value<QStringList>();
+
+    DEBUG_MSG("Looking for files in:" << config.watchList.toString());
+
+    watcher.addPaths(config.watchList);
+}
+void FileSystemWatcher::dispose()
 {
     bool checker = QObject::disconnect(
                              &watcher,
-                             SIGNAL(fileChanged(QString)),
+                             SIGNAL(directoryChanged(QString)),
                              this,
-                             SLOT(onFileChanged(QString))
+                             SLOT(onDirectoryChanged(QString))
                 );
 
     Q_ASSERT(checker);
@@ -38,8 +52,20 @@ void FilesystemWatcher::dispose()
     watcher.removePaths(config.watchList);
 }
 
-void FilesystemWatcher::onFileChanged(const QString &path)
+void FileSystemWatcher::onDirectoryChanged(const QString &path)
 {
-    MediaItem mi(path,QByteArray());
-    core->addNewMediaItem(mi);
+    DEBUG_MSG("Directory content changed: " << path );
+
+    if ( !core ){
+        DEBUG_MSG("Nullptr of core interface.");
+        return;
+    }
+
+    QDirIterator it(path, extFilters, QDir::Files, QDirIterator::Subdirectories);
+
+    while (it.hasNext())
+    {
+        QUrl url(it.next());
+        core->addShare(url);
+    }
 }

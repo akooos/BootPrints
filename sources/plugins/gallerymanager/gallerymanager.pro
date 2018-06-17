@@ -41,10 +41,15 @@ else {
     DESTDIR = $${BUILD_DIR}/release
 }
 
-DESTDIR = $${DESTDIR}_$${QMAKE_HOST.os}_$${QMAKE_HOST.arch}/plugins
+CORE_DESTDIR = $${DESTDIR}_$${QMAKE_HOST.os}_$${QMAKE_HOST.arch}
+
+DESTDIR = $${CORE_DESTDIR}/plugins
 
 OTHERS_DEST_DIR = $$DESTDIR/$${TARGET}_parts
 OBJECTS_DIR = $${OTHERS_DEST_DIR}/objs
 MOC_DIR = $${OTHERS_DEST_DIR}/mocs
 RCC_DIR = $${OTHERS_DEST_DIR}/rccs
 UI_DIR = $${OTHERS_DEST_DIR}/uis
+
+#add core dependecy
+LIBS += -L$$CORE_DESTDIR -lBootPrintsCore

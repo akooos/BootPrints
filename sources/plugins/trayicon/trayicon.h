@@ -6,22 +6,24 @@
 
 #include <config.h>
 #include <plugin.h>
-#include <uiplugin.h>
+
+class UIInternal;
 
 using namespace BootPrints::Interfaces;
 
-class FilesystemWatcher : public QObject, Plugin
+class TrayIcon : public QObject, Plugin
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID Plugin_iid FILE "trayicon.json")
     Q_INTERFACES( BootPrints::Interfaces::Plugin )
-    UIPlugin *ui;
+    UIInternal *ui;
     QMenu menu;
     QSystemTrayIcon systemTrayIcon;
+    QAction actionClose;
 
 public:
-    FilesystemWatcher(QObject *parent = 0);
-    void init(CorePtr core, QHash<QString,BasePlugin*> deps ) override;
+    TrayIcon(QObject *parent = 0);
+    void init(BootPrints::Interfaces::Internal *core) override;
     void dispose() override;
 private slots:
     void onSystemTrayActivated(QSystemTrayIcon::ActivationReason);
