@@ -68,7 +68,7 @@ void TrayIcon::init(BootPrints::Interfaces::Internal *core)
 
 void TrayIcon::dispose()
 {
-    SCOPE_CHECKER
+    SCOPE_SENTINEL
     ui = nullptr;
 
 }

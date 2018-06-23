@@ -9,7 +9,7 @@ void signalHandler(int sig)
 
 int main(int argc, char *argv[])
 {
-    SCOPE_CHECKER
+    SCOPE_SENTINEL
     signal(SIGINT,signalHandler);
     signal(SIGTERM,signalHandler);
     signal(SIGKILL,signalHandler);

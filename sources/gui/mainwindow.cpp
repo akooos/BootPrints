@@ -9,19 +9,19 @@ MainWindow::MainWindow(
 ) : QMainWindow(parent)
 
 {     
-    SCOPE_CHECKER
+    SCOPE_SENTINEL
     ui.setupUi(this);
     setWindowIcon(QIcon::fromTheme(":/appMainIcon",QIcon::fromTheme("applications-multimedia")).pixmap(QSize(256,256)));
 }
 
 MainWindow::~MainWindow()
 {
-  SCOPE_CHECKER
+  SCOPE_SENTINEL
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-    SCOPE_CHECKER
+    SCOPE_SENTINEL
     event->accept();
     BootPrintsQt::instance()->quit();
 }

@@ -5,7 +5,7 @@
 
 namespace BootPrints::Interfaces
 {
-   struct GalleryManager : Plugin
+   struct GalleryManager : virtual Plugin
    {
        virtual void read(unsigned int offset, unsigned int limit) = 0;
    };

@@ -4,15 +4,19 @@
 class QUrl;
 class QStringList;
 
-namespace BootPrints::Interfaces
+#include "plugin.h"
+
+namespace BootPrints
 {
-    class Plugin;
+  namespace Interfaces
+  {
     struct Internal
     {
        virtual void addShare(  const QUrl &url ) = 0;
        virtual void subscribeToShareProvider(const QString &pluginName ) = 0;
        virtual void unSubscribeFromShareProvider(const QString &pluginName ) = 0;
     };
+  }
 }
 
 

@@ -6,7 +6,7 @@
 namespace BootPrints::Interfaces
 {
    template<class T>
-   struct ConfigUI : Plugin
+   struct ConfigUI : virtual Plugin
    {
        T* widget() const = 0;
    };

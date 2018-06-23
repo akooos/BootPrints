@@ -79,30 +79,31 @@ void Core::onNewShare(const QUrl &url)
 
 void Core::onNewSubscribeForShare(const QString &pluginName)
 {
-    Dispatcher *who = qobject_cast<Dispatcher*> ( QObject::sender() );
-    Dispatcher *toWhat = plugins.value(pluginName,nullptr).data();
-    if ( !toWhat )
+    Dispatcher *subscriber = qobject_cast<Dispatcher*> ( QObject::sender() );
+    Dispatcher *publisher = plugins.value(pluginName,nullptr).data();
+    if ( !publisher )
     {
         DEBUG_MSG("Unknown subscription!");
         return;
     }
-    if ( !who )
+    if ( !subscriber )
     {
         DEBUG_MSG("Unknown subscriber!");
         return;
     }
 
-    Interfaces::Share *share = dynamic_cast<Interfaces::Share*>(who->getPluginPtr());
+    DEBUG_MSG("Subscriber" << subscriber->getMetaData().value("name").toString())
+    DEBUG_MSG("Publisher" << publisher->getMetaData().value("name").toString())
+    Interfaces::Share *share = dynamic_cast<Interfaces::Share*>(subscriber->getPluginPtr());
 
-    if ( !who )
+    if ( !share )
     {
-        DEBUG_MSG("Subscriber does not implement proper interface!");
+        DEBUG_MSG("Subscriber does not implement proper interface!" << subscriber->getMetaData().value("name").toString());
         return;
     }
 
-    who = dynamic_cast<Dispatcher*>(toWhat);
-
-    shareSubscriptions.insert(who->getPluginPtr(),share);
+    shareSubscriptions.insert(publisher->getPluginPtr(),share);
+    DEBUG_MSG("Subscription was successfull" << pluginName)
 }
 
 void Core::addPlugin(const QString &name, Interfaces::Plugin *plugin, QJsonObject metaData)

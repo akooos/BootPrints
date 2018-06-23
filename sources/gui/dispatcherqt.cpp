@@ -16,7 +16,7 @@ const QIcon DispatcherQt::appIcon() const
 
 void DispatcherQt::quit()
 {
-    SCOPE_CHECKER
+    SCOPE_SENTINEL
    BootPrintsQt::instance()->quit();
 }
 

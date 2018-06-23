@@ -51,7 +51,7 @@ class BootPrintsQt : public BootPrints::Core, public Singleton<BootPrintsQt>
 
     static int start(int argc, char *argv[])
     {
-        SCOPE_CHECKER
+        SCOPE_SENTINEL
         QApplication application(argc,argv);
 
         Q_INIT_RESOURCE(icons);

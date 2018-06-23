@@ -7,7 +7,7 @@ class QUrl;
 
 namespace BootPrints::Interfaces
 {
-    struct Share : public Plugin
+    struct Share : virtual Plugin
     {
         virtual void newShareReceived(const QUrl &url) = 0 ;
     };

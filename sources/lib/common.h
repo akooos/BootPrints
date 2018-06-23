@@ -83,7 +83,7 @@ namespace BootPrints{
             qDebug() << "Elapsed:" << ( endTime - startTime );
         }
     };
-    #define SCOPE_CHECKER ScopeChecker scopeChecker(__PRETTY_FUNCTION__,__FILE__,__LINE__);
+    #define SCOPE_SENTINEL ScopeChecker scopeChecker(__PRETTY_FUNCTION__,__FILE__,__LINE__);
 #elif
 #define SCOPE_CHECKER
 #endif

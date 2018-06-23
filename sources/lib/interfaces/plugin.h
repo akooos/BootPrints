@@ -7,15 +7,14 @@ namespace BootPrints{
     namespace Interfaces
     {
         class Internal;
-        class Plugin;
-        typedef QHash<QString,BootPrints::Interfaces::Plugin*> PluginHashMap;
-
         struct Plugin
         {
-           virtual void init(BootPrints::Interfaces::Internal *core) = 0;
+           virtual void init(Internal *core) = 0;
            virtual void dispose() = 0;
 
         };
+
+        using PluginHashMap =  QHash<QString,Plugin*>;
     }
 }
 #define Plugin_iid "org.Akooos.BootPrints.Plugin"

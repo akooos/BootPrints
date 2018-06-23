@@ -123,13 +123,13 @@ void BootPrintsQt::setDefaultConfig()
 
 void BootPrintsQt::quit(int exitcode)
 {
-   SCOPE_CHECKER
+   SCOPE_SENTINEL
    QApplication::processEvents(QEventLoop::AllEvents);
    emit quitSignal(exitcode);
 }
 void BootPrintsQt::onQuit(int exitcode)
 {
-    SCOPE_CHECKER
+   SCOPE_SENTINEL
    saveConfig();
    config.previousShutdownDateTime = QDateTime::currentDateTime();
    disposePlugins();
@@ -138,7 +138,7 @@ void BootPrintsQt::onQuit(int exitcode)
 
 void BootPrintsQt::start()
 {
-    SCOPE_CHECKER
+    SCOPE_SENTINEL
     loadConfig();
     loadPlugins();
     mainWindow.show();
