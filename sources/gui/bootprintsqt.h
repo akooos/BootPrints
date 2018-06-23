@@ -20,11 +20,9 @@ namespace  {
 }
 
 
-class BootPrintsQt : public BootPrints::Core, public Singleton<BootPrintsQt,int, char*[]>
+class BootPrintsQt : public BootPrints::Core, public Singleton<BootPrintsQt>
 {
-
-
-
+    Q_OBJECT
     struct Config : BootPrints::Config<gui_app_name>
     {
        CONFIG_PROPERTY(QByteArray,geometry)
@@ -40,22 +38,48 @@ class BootPrintsQt : public BootPrints::Core, public Singleton<BootPrintsQt,int,
     void saveConfig();
     void setDefaultConfig();
 
+    friend class DispatcherQt;
+
+  public:
+    explicit BootPrintsQt();
+    virtual ~BootPrintsQt();
 
     MainWindow mainWindow;
 
-    friend class DispatcherQt;
-
-
-
-
-  public:
-explicit BootPrintsQt(int argc, char *argv[]);
-    int execute();
     void quit(int exitcode = 0);
+    void start();
+
+    static int start(int argc, char *argv[])
+    {
+        SCOPE_CHECKER
+        QApplication application(argc,argv);
+
+        Q_INIT_RESOURCE(icons);
+
+        DEBUG_MSG("Initialiazing BootPrints based on Qt." )
+        DEBUG_MSG("Version"<< BootPrints::version)
+        DEBUG_MSG("SCCS version" << BootPrints::sccs_version)
+        DEBUG_MSG("Build date" << BootPrints::build_date << BootPrints::build_time)
+        DEBUG_MSG("Compiler" << BootPrints::compiler)
 
 
+        QApplication::setOrganizationName(BootPrints::org_name);
+        QApplication::setOrganizationDomain(BootPrints::org_domain);
+        QApplication::setApplicationDisplayName(BootPrints::app_name);
+        QApplication::setApplicationName(BootPrints::app_name);
+        QApplication::setApplicationVersion(BootPrints::version);
+        QApplication::setQuitOnLastWindowClosed(true);
+        auto instance = std::unique_ptr<BootPrintsQt>(BootPrintsQt::create());
+        instance->start();
+        return application.exec();
+    }
+
+ private slots:
+    void onQuit(int errorcode);
+
+   signals:
+     void quitSignal(int errorcode = 0);
   protected:
-
 
     virtual DispatcherSPtr createDispatcher(
             BootPrints::Interfaces::Plugin *plugin,

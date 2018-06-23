@@ -16,6 +16,11 @@ Core::Core( QObject *parent)
 
 }
 
+Core::~Core()
+{
+
+}
+
 void Core::disposePlugins()
 {
     //TODO dispose plugins as dependecies requires.
@@ -62,6 +67,8 @@ void Core::onNewShare(const QUrl &url)
         DEBUG_MSG("dispatcher is NULL ptr!");
         return;
     }
+
+    DEBUG_MSG("Share received" << url.toString())
 
     QList<Interfaces::Share *> ls = shareSubscriptions.values(dispatcher->getPluginPtr());
     for (Interfaces::Share * share : ls )
@@ -116,14 +123,23 @@ void Core::addPlugin(const QString &name, Interfaces::Plugin *plugin, QJsonObjec
 
 void Core::initPlugins()
 {
-    for ( auto it = plugins.begin(); it != plugins.end();++it)
+    auto it = plugins.begin();
+    for ( auto it = plugins.begin(); it != plugins.end();)
     {
         Interfaces::Plugin *bootprints_plugin = it.value()->getPluginPtr();
         if (bootprints_plugin)
         {
             DEBUG_MSG("Initialize plugin:" << it.key())
-            //TODO for now pass everything
-            bootprints_plugin->init(it.value().data());
+            try
+            {
+                bootprints_plugin->init(it.value().data());
+                ++it;
+            }catch(exception)
+            {
+                DEBUG_MSG("Exception happend in plugin "  )
+                ++it;
+                plugins.remove(it.key());
+            }
         }
     }
 }

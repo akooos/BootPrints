@@ -13,5 +13,9 @@ struct DispatcherQt : public Dispatcher, UIInternal
 
     virtual const QIcon appIcon() const override;
     virtual void quit() override;
+    virtual void show() override;
+    virtual void hide() override;
+    virtual bool isVisible() const;
+
 };
 #endif // UIDISPATCHER_H

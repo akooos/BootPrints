@@ -7,39 +7,21 @@
 #include <QMessageBox>
 #include <exception.h>
 
- char  *ize[] = {"lalala"};
-const int count1 = 1;
-
-BootPrintsQt::BootPrintsQt(
-        int argc,
-        char *argv[]
-)  : BootPrints::Core(nullptr),
 
 
+BootPrintsQt::BootPrintsQt()  : BootPrints::Core(nullptr),
     mainWindow()
 
 {
+  bool checker = QObject::connect(this,SIGNAL(quitSignal(int)),this,SLOT(onQuit(int)));
 
+  Q_ASSERT(checker);
 
-    Q_INIT_RESOURCE(icons);
+  Q_UNUSED(checker);
+}
 
-
-
-    DEBUG_MSG("Initialiazing BootPrints based on Qt." )
-    DEBUG_MSG("Version"<< BootPrints::version)
-    DEBUG_MSG("SCCS version" << BootPrints::sccs_version)
-    DEBUG_MSG("Build date" << BootPrints::build_date << BootPrints::build_time)
-    DEBUG_MSG("Compiler" << BootPrints::compiler)
-
-
-    QApplication::setOrganizationName(BootPrints::org_name);
-    QApplication::setOrganizationDomain(BootPrints::org_domain);
-    QApplication::setApplicationDisplayName(BootPrints::app_name);
-    QApplication::setApplicationName(BootPrints::app_name);
-    QApplication::setApplicationVersion(BootPrints::version);
-    QApplication::setQuitOnLastWindowClosed(true);
-
-    mainWindow.setWindowIcon(QIcon::fromTheme(":/appMainIcon",QIcon::fromTheme("applications-multimedia")));
+BootPrintsQt::~BootPrintsQt()
+{
 
 }
 
@@ -63,6 +45,15 @@ void BootPrintsQt::loadPlugins()
    try
    {
      QStringList lsProblems = addPlugins(pluginsDir);
+     if ( !lsProblems.isEmpty() )
+     {
+         QMessageBox::warning(
+                     0,
+                     QObject::tr(gui_app_name),
+                     lsProblems.join(", ")
+         );
+
+     }
      initPlugins();
    } catch(BootPrints::Exception exception)
    {
@@ -117,7 +108,7 @@ void BootPrintsQt::saveConfig()
 
 void BootPrintsQt::setDefaultConfig()
 {
-    QRect rec = QApplication::desktop()->screenGeometry();
+    const QRect rec = QApplication::desktop()->screenGeometry();
     auto screen_height = rec.height();
     auto screen_width = rec.width();
     //position to middle, and occupie 80% of the screen
@@ -130,19 +121,27 @@ void BootPrintsQt::setDefaultConfig()
     mainWindow.setWindowState(Qt::WindowActive);
 }
 
-int BootPrintsQt::execute()
-{
-    return 0;
-}
-
 void BootPrintsQt::quit(int exitcode)
 {
-    saveConfig();
-    config.previousShutdownDateTime = QDateTime::currentDateTime();
+   SCOPE_CHECKER
+   QApplication::processEvents(QEventLoop::AllEvents);
+   emit quitSignal(exitcode);
+}
+void BootPrintsQt::onQuit(int exitcode)
+{
+    SCOPE_CHECKER
+   saveConfig();
+   config.previousShutdownDateTime = QDateTime::currentDateTime();
+   disposePlugins();
+   QApplication::exit(exitcode);
+}
 
-    disposePlugins();
-
-    QApplication::exit(exitcode);
+void BootPrintsQt::start()
+{
+    SCOPE_CHECKER
+    loadConfig();
+    loadPlugins();
+    mainWindow.show();
 }
 
 

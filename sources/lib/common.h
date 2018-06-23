@@ -5,7 +5,7 @@
 
 #ifdef QT_DEBUG
     #include <QDateTime>
-    #define DEBUG_MSG(s) qDebug() << QDateTime::currentDateTime().toString(Qt::DefaultLocaleShortDate) << "@" << __FILE__ << "#" << __LINE__ << "message:\"" << s << "\" in function: " << __PRETTY_FUNCTION__;
+    #define DEBUG_MSG(s) qDebug() << __FILE__ << __LINE__ << s <<  __PRETTY_FUNCTION__ << QDateTime::currentDateTime().toSecsSinceEpoch();
 #else
     #define DEBUG_MSG(s)
 #endif
@@ -17,11 +17,14 @@
 #define EVAL_CONCAT(a,b,c,d) CONCAT(a,b,c,d)
 
 // V E R S I O N
+#ifndef GIT_COMMIT_HASH
+#define GIT_COMMIT_HASH 0000
+#endif
 #define MAJOR 0
 #define MINOR 1
 #define BUGFIX 0
 #define APP_VERSION STRINGIFY(EVAL_CONCAT(MAJOR,MINOR,BUGFIX,DOT))
-#define REVISION STRINGIFY(GIT_VERSION)
+#define REVISION STRINGIFY(GIT_COMMIT_HASH)
 
 #if defined(__clang__)
 #define COMPILER "Clang/LLVM"
@@ -54,13 +57,37 @@ namespace BootPrints{
    static const char * app_name = "BootPrints";
    static const char * org_name = "BlueBlur";
    static const char * org_domain = "Software Development";
-   static const char * version = APP_VERSION;
+   static const char * version = STRINGIFY(APP_VERSION);
    static const char * build_date = __DATE__;
    static const char * build_time = __TIME__;
    static const char * compiler = COMPILER;
-   static const char * sccs_version = STRINGIFY(GIT_VERSION);
-
+   static const char * sccs_version = STRINGIFY(GIT_COMMIT_HASH);
 }
+
+#ifdef DEBUG_MSG
+    struct ScopeChecker
+    {
+        QString funcname, file;
+        int linenr;
+        qint64 startTime;
+
+        ScopeChecker( QString funcname, QString file, int linenr) : funcname(funcname),file(file),linenr(linenr), startTime(QDateTime::currentDateTime().toMSecsSinceEpoch())
+        {
+            qDebug() << ( QString("BEGIN %1 %2:%3 ").arg(funcname).arg(file).arg(linenr) ).toStdString().c_str() << startTime;
+
+        }
+        ~ScopeChecker()
+        {
+            qint64 endTime = QDateTime::currentDateTime().toMSecsSinceEpoch();
+            qDebug() << ( QString("END %1 %2:%3 ").arg(funcname).arg(file).arg(linenr) ).toStdString().c_str() <<  endTime;
+            qDebug() << "Elapsed:" << ( endTime - startTime );
+        }
+    };
+    #define SCOPE_CHECKER ScopeChecker scopeChecker(__PRETTY_FUNCTION__,__FILE__,__LINE__);
+#elif
+#define SCOPE_CHECKER
+#endif
+
 #include "exception.h"
 #endif // COMMON_H
 

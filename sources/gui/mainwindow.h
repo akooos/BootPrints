@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 
+
+
 #include <ui_mainwindow.h>
 
 class QCloseEvent;
@@ -12,6 +14,8 @@ class MainWindow : public QMainWindow
    Q_OBJECT
 
     Ui::MainWindow ui;
+
+
 
   protected:
     virtual void closeEvent(QCloseEvent *event) override;

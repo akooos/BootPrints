@@ -12,6 +12,9 @@ struct UIInternal
 {
     virtual const QIcon appIcon() const = 0;
     virtual void quit() = 0;
+    virtual void show() = 0;
+    virtual void hide() = 0;
+    virtual bool isVisible() const = 0;
 };
 
 

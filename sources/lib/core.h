@@ -30,6 +30,7 @@ namespace BootPrints
      public:
 
         Core( QObject *parent = 0 );
+        virtual ~Core();
 
         QStringList addPlugins(const QDir &pluginsDir);
         void initPlugins();

@@ -9,11 +9,28 @@ DispatcherQt::DispatcherQt(BootPrints::Interfaces::Plugin *plugin,
 
 }
 const QIcon DispatcherQt::appIcon() const
-{
-    return BootPrintsQt::instance().mainWindow.windowIcon();
+{  
+    return BootPrintsQt::instance()->mainWindow.windowIcon();
 }
+
 
 void DispatcherQt::quit()
 {
-   BootPrintsQt::instance().quit();
+    SCOPE_CHECKER
+   BootPrintsQt::instance()->quit();
+}
+
+void DispatcherQt::hide()
+{
+    BootPrintsQt::instance()->mainWindow.hide();
+}
+
+void DispatcherQt::show()
+{
+    BootPrintsQt::instance()->mainWindow.show();
+}
+
+bool DispatcherQt::isVisible() const
+{
+    return BootPrintsQt::instance()->mainWindow.isVisible();
 }

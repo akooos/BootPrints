@@ -27,6 +27,7 @@ public:
     void dispose() override;
 private slots:
     void onSystemTrayActivated(QSystemTrayIcon::ActivationReason);
+    void onCloseTriggered(bool);
 };
 
 #endif // TRAYICON_H

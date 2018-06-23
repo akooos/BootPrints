@@ -48,6 +48,7 @@ class FileSystemWatcher : public QObject, Plugin
     struct Config : BootPrints::Config<config_group_name> {
         CONFIG_PROPERTY(QStringList,watchList)
         CONFIG_PROPERTY(QStringList,fileExtensionWatchList)
+        CONFIG_PROPERTY(QDateTime,lastCheckTimestamp)
     } config;
 
     QFileSystemWatcher watcher;

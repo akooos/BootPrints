@@ -1,8 +1,17 @@
 #include "bootprintsqt.h"
+#include <signal.h>
+
+void signalHandler(int sig)
+{
+    printf("Operating system sent a signal:%d (%s)\n",sig,strsignal(sig));
+    BootPrintsQt::instance()->quit(-sig);
+}
 
 int main(int argc, char *argv[])
 {
-    QApplication application(argc,argv);
-    BootPrintsQt::create(argc,argv).execute();
-    return application.exec();
+    SCOPE_CHECKER
+    signal(SIGINT,signalHandler);
+    signal(SIGTERM,signalHandler);
+    signal(SIGKILL,signalHandler);
+    return BootPrintsQt::start(argc,argv);
 }

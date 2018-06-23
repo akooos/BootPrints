@@ -13,21 +13,22 @@
 template <class T, typename ...TArgs>
 class Singleton
 {
-     static std::unique_ptr<T> _instance;
+     static T*  _instance;
+
    public:
 
-      static T & create(TArgs...args)
+      static T* create(TArgs...args)
       {
           if( !_instance )
           {
-              _instance.reset( new T(args...) );
+              _instance = new T( args... );
           }
-          return *_instance;
+          return _instance;
       }
 
-      static T& instance()
+      static T* instance()
       {
-          return *_instance;
+          return _instance;
       }
    protected:
       Singleton(){}
@@ -40,6 +41,6 @@ class Singleton
 };
 
 template <class T, typename ...TArgs>
-std::unique_ptr<T> Singleton<T,TArgs...>::_instance = nullptr;
+T* Singleton<T,TArgs...>::_instance = nullptr;
 
 #endif // SINGLETON_H

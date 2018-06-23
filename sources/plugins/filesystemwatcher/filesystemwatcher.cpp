@@ -30,6 +30,10 @@ void FileSystemWatcher::init(BootPrints::Interfaces::Internal *core)
 {
     this->core = core;
 
+    if (!config.lastCheckTimestamp.exists() )
+    {
+        config.lastCheckTimestamp = QDateTime::fromSecsSinceEpoch(0);
+    }
     extFilters = config.fileExtensionWatchList.value( defFileExtensionWatchList ).value<QStringList>();
 
     DEBUG_MSG("Looking for files in:" << config.watchList.toString());
@@ -62,10 +66,21 @@ void FileSystemWatcher::onDirectoryChanged(const QString &path)
     }
 
     QDirIterator it(path, extFilters, QDir::Files, QDirIterator::Subdirectories);
-
+    QDateTime lastCheckTimestamp = config.lastCheckTimestamp;
     while (it.hasNext())
     {
-        QUrl url(it.next());
-        core->addShare(url);
+        QFileInfo fi(it.next());
+
+        if (  fi.lastModified() >= lastCheckTimestamp )
+        {
+            QUrl url(fi.absoluteFilePath());
+            core->addShare(url);
+        }
+        else
+        {
+            DEBUG_MSG("Ignoring file, because last check time is greater that modification time" << fi.absoluteFilePath())
+        }
     }
+
+    config.lastCheckTimestamp = QDateTime::currentDateTime();
 }

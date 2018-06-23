@@ -31,12 +31,13 @@ void TrayIcon::init(BootPrints::Interfaces::Internal *core)
         return;
     }
 
-     ui = dynamic_cast< UIInternal * > (core);
+    ui = dynamic_cast< UIInternal * > (core);
 
     if ( !ui )
     {
         QMessageBox::critical(0, QObject::tr("Systray"),
                               QObject::tr("Bootprints Qt UI does not run?! No proper pointer."));
+
         return;
     }
 
@@ -57,24 +58,45 @@ void TrayIcon::init(BootPrints::Interfaces::Internal *core)
 
     Q_ASSERT(checker);
 
+    checker = QObject::connect(&actionClose,SIGNAL(triggered(bool)),this,SLOT(onCloseTriggered(bool)));
+
+    Q_ASSERT(checker);
+
     Q_UNUSED(checker);
 
 }
 
 void TrayIcon::dispose()
 {
+    SCOPE_CHECKER
     ui = nullptr;
+
 }
 void TrayIcon::onSystemTrayActivated(QSystemTrayIcon::ActivationReason reason)
 {
     switch (reason) {
         case QSystemTrayIcon::Trigger:
         case QSystemTrayIcon::DoubleClick:
-            //setVisible( !isVisible() );
+            if ( ui->isVisible() )
+            {
+                ui->hide();
+            } else
+            {
+                ui->show();
+            }
+
             break;
         case QSystemTrayIcon::MiddleClick:
             break;
         default:
             ;
-        }
+    }
+}
+
+void TrayIcon::onCloseTriggered(bool)
+{
+    if ( ui )
+    {
+        ui->quit();
+    }
 }

@@ -4,7 +4,7 @@ CONFIG += staticlib
 
 TARGET = BootPrintsCore
 
-DEFINES += GIT_VERSION='$(shell git describe --always)'
+DEFINES += GIT_COMMIT_HASH='$(shell git describe --always)'
 
 HEADERS += \
     config.h \
