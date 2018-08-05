@@ -27,13 +27,18 @@ class MediaItem
 
      const QByteArray & hash() const;
 
-     static MediaItem create(const QFileInfo &fi, const qint64 max_read_buffer_size = 1024*1024*4)
+     const QString toString() const
+     {
+        return fp.toString() + "|" +  sumhash;
+     }
+
+     static MediaItem create(const QFileInfo &fi, const size_t max_read_buffer_size = 1024*1024*4)
      {
          QFile file(fi.absoluteFilePath());
          QCryptographicHash hashFunction(QCryptographicHash::Md5);
          qint64 return_code = -1;
 
-         std::vector<char*> buffer { (size_t) max_read_buffer_size ,0};
+         std::vector<char*> buffer { max_read_buffer_size , nullptr };
 
          if (!file.open(QIODevice::ReadOnly))
          {
@@ -43,12 +48,12 @@ class MediaItem
 
          do
          {
-             return_code = file.read( (char*) buffer.data(), max_read_buffer_size );
+             return_code = file.read( *buffer.data(), static_cast<qint64> ( max_read_buffer_size) );
 
              if ( return_code > 0 )
              {
                  DEBUG_MSG(return_code << "bytes were read from file:" << fi.absoluteFilePath())
-                 hashFunction.addData( (char*) buffer.data(), return_code );
+                 hashFunction.addData( *buffer.data(), static_cast<int> (return_code) );
              } else
                  if ( return_code < 0 ) {
                      //error reading file: report error and quit
@@ -69,6 +74,8 @@ class MediaItem
                  }
 
          } while( return_code > 0 );
+
+         return MediaItem(fi.absoluteFilePath(),hashFunction.result());
      }
 };
 

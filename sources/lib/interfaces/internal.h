@@ -1,7 +1,7 @@
 #ifndef INTERNAL_H
 #define INTERNAL_H
 
-class QUrl;
+class MediaItem;
 class QStringList;
 
 #include "plugin.h"
@@ -12,9 +12,10 @@ namespace BootPrints
   {
     struct Internal
     {
-       virtual void addShare(  const QUrl &url ) = 0;
+       virtual void addMediaItem( const MediaItem &mi ) = 0;
        virtual void subscribeToShareProvider(const QString &pluginName ) = 0;
        virtual void unSubscribeFromShareProvider(const QString &pluginName ) = 0;
+       virtual ~Internal() = default;
     };
   }
 }

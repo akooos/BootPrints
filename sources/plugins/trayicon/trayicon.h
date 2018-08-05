@@ -22,7 +22,7 @@ class TrayIcon : public QObject, Plugin
     QAction actionClose;
 
 public:
-    TrayIcon(QObject *parent = 0);
+    TrayIcon(QObject *parent = nullptr);
     void init(BootPrints::Interfaces::Internal *core) override;
     void dispose() override;
 private slots:

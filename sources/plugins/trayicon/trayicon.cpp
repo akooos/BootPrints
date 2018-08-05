@@ -18,7 +18,7 @@ TrayIcon::TrayIcon(
 void TrayIcon::init(BootPrints::Interfaces::Internal *core)
 {
     if (!QSystemTrayIcon::isSystemTrayAvailable()) {
-        QMessageBox::critical(0, QObject::tr("Systray"),
+        QMessageBox::critical(nullptr, QObject::tr("Systray"),
                               QObject::tr("I couldn't detect any system tray "
                                           "on this system."));
         return;
@@ -26,7 +26,7 @@ void TrayIcon::init(BootPrints::Interfaces::Internal *core)
 
     if ( !core )
     {
-        QMessageBox::critical(0, QObject::tr("Systray"),
+        QMessageBox::critical(nullptr, QObject::tr("Systray"),
                               QObject::tr("Bootprints Qt UI does not run?! Empty pointer."));
         return;
     }
@@ -35,7 +35,7 @@ void TrayIcon::init(BootPrints::Interfaces::Internal *core)
 
     if ( !ui )
     {
-        QMessageBox::critical(0, QObject::tr("Systray"),
+        QMessageBox::critical(nullptr, QObject::tr("Systray"),
                               QObject::tr("Bootprints Qt UI does not run?! No proper pointer."));
 
         return;

@@ -53,3 +53,6 @@ UI_DIR = $${OTHERS_DEST_DIR}/uis
 
 #add core dependecy
 LIBS += -L$$CORE_DESTDIR -lBootPrintsCore
+
+DISTFILES += \
+    dababase.sql

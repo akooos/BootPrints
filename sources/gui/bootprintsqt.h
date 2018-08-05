@@ -15,21 +15,18 @@
 #include <QApplication>
 
 
-namespace  {
-    extern char const gui_app_name[] = "bootprints-qtui";
-}
-
-
 class BootPrintsQt : public BootPrints::Core, public Singleton<BootPrintsQt>
 {
     Q_OBJECT
-    struct Config : BootPrints::Config<gui_app_name>
-    {
+
+    constexpr static const char gui_app_name[] = "bootprints-qtgui";
+
+    BEGIN_CONFIG(gui_app_name)
        CONFIG_PROPERTY(QByteArray,geometry)
        CONFIG_PROPERTY(QByteArray,windowState)
        CONFIG_PROPERTY(QDateTime,previousStartupDateTime)
        CONFIG_PROPERTY(QDateTime,previousShutdownDateTime)
-    } config;
+    END_CONFIG
 
     void createTrayIcon();
     void createActions();
@@ -61,7 +58,6 @@ class BootPrintsQt : public BootPrints::Core, public Singleton<BootPrintsQt>
         DEBUG_MSG("SCCS version" << BootPrints::sccs_version)
         DEBUG_MSG("Build date" << BootPrints::build_date << BootPrints::build_time)
         DEBUG_MSG("Compiler" << BootPrints::compiler)
-
 
         QApplication::setOrganizationName(BootPrints::org_name);
         QApplication::setOrganizationDomain(BootPrints::org_domain);

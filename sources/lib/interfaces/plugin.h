@@ -6,11 +6,12 @@
 namespace BootPrints{
     namespace Interfaces
     {
-        class Internal;
+        struct Internal;
         struct Plugin
         {
            virtual void init(Internal *core) = 0;
            virtual void dispose() = 0;
+           virtual ~Plugin() = default;
 
         };
 

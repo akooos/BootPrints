@@ -2,7 +2,7 @@
 #define DISPATCHER_H
 
 #include <QJsonObject>
-
+#include <mediaitem.h>
 #include <internal.h>
 #include <plugin.h>
 
@@ -14,7 +14,9 @@ class Dispatcher : public QObject, public BootPrints::Interfaces::Internal
 
 public:
 
-    Dispatcher(BootPrints::Interfaces::Plugin *plugin, const QJsonObject &metaData, QObject *parent = 0);
+    Dispatcher(BootPrints::Interfaces::Plugin *plugin, const QJsonObject &metaData, QObject *parent = nullptr);
+
+    virtual ~Dispatcher();
 
     BootPrints::Interfaces::Plugin *getPluginPtr() const
     {
@@ -24,12 +26,12 @@ public:
     {
         return metaData;
     }
-    void addShare(const QUrl &url);
+    void addMediaItem(const MediaItem &mi);
     void subscribeToShareProvider(const QString &pluginName);
     void unSubscribeFromShareProvider( const QString &pluginName);
 
 signals:
-    void newShare(const QUrl &url);
+    void newMediaItem(const MediaItem mi);
     void newSubscriptionForShare(const QString &pluginName);
     void unSubscribeShare(const QString &pluginName);
 };

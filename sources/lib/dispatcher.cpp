@@ -12,9 +12,14 @@ Dispatcher::Dispatcher(
 
 }
 
-void Dispatcher::addShare(const QUrl &url)
+Dispatcher::~Dispatcher()
 {
-   emit newShare(url);
+
+}
+
+void Dispatcher::addMediaItem(const MediaItem &mi)
+{
+   emit newMediaItem(mi);
 }
 
 void Dispatcher::subscribeToShareProvider(const QString &pluginName)

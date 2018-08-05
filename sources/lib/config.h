@@ -6,9 +6,12 @@
 #include <QSettings>
 
 
-#define CONFIG_MAIN_PROPERTY(type,name,args...) BootPrints::ConfigEntry<type> name = { #name, args }
-#define CONFIG_PROPERTY(type,name,args...)  BootPrints::GrouppedConfigEntry<type> name = { config_group, #name, args };
-
+#define CONFIG_MAIN_PROPERTY(type,name,...) BootPrints::ConfigEntry<type> name = { #name, __VA_ARGS__ }
+#define CONFIG_PROPERTY(type,name,...)  BootPrints::GrouppedConfigEntry<type> name = { config_group, #name, __VA_ARGS__ };
+#define BEGIN_CONFIG(configGroup)                       \
+    struct Config {                               \
+       const QString config_group  = configGroup;
+#define END_CONFIG } config;
 namespace
 {
     QSettings settings = QSettings(BootPrints::org_name,BootPrints::app_name);
@@ -114,11 +117,6 @@ namespace BootPrints
             settings.sync();
             settings.endGroup();
         }
-    };
-    template <const char* group_name>
-    struct Config
-    {
-        const QString config_group = group_name;
     };
 
 

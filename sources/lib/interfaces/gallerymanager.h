@@ -7,8 +7,10 @@ namespace BootPrints::Interfaces
 {
    struct GalleryManager : virtual Plugin
    {
-       virtual void read(unsigned int offset, unsigned int limit) = 0;
+      virtual void read(unsigned int offset, unsigned int limit) = 0;
+      virtual ~GalleryManager() = default;
    };
+
 }
 
 #define GalleryManager_iid "org.Akooos.BootPrints.GalleryManager"

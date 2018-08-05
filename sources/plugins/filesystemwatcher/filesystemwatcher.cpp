@@ -12,7 +12,7 @@
 
 #include "filesystemwatcher.h"
 
-FileSystemWatcher::FileSystemWatcher(QObject *parent):QObject(parent),core(nullptr),extFilters(defFileExtensionWatchList)
+FileSystemWatcher::FileSystemWatcher(QObject *parent):QObject(parent),core(nullptr),extFilters(QStringList() << "*.jpg" << "*.JPG" << "*.jpeg" << "*.png" << "*.PNG" << "*.bmp" << "*.mp4")
 {
 
     bool checker = QObject::connect(
@@ -34,7 +34,7 @@ void FileSystemWatcher::init(BootPrints::Interfaces::Internal *core)
     {
         config.lastCheckTimestamp = QDateTime::fromSecsSinceEpoch(0);
     }
-    extFilters = config.fileExtensionWatchList.value( defFileExtensionWatchList ).value<QStringList>();
+    extFilters = config.fileExtensionWatchList.value( extFilters ).value<QStringList>();
 
     DEBUG_MSG("Looking for files in:" << config.watchList.toString());
 
@@ -73,8 +73,7 @@ void FileSystemWatcher::onDirectoryChanged(const QString &path)
 
         if (  fi.lastModified() >= lastCheckTimestamp )
         {
-            QUrl url(fi.absoluteFilePath());
-            core->addShare(url);
+            core->addMediaItem(MediaItem(fi.absoluteFilePath(),QByteArray()));
         }
         else
         {

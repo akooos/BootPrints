@@ -54,14 +54,14 @@
 #endif
 
 namespace BootPrints{
-   static const char * app_name = "BootPrints";
-   static const char * org_name = "BlueBlur";
-   static const char * org_domain = "Software Development";
-   static const char * version = STRINGIFY(APP_VERSION);
-   static const char * build_date = __DATE__;
-   static const char * build_time = __TIME__;
-   static const char * compiler = COMPILER;
-   static const char * sccs_version = STRINGIFY(GIT_COMMIT_HASH);
+   extern const char app_name[];
+   extern const char org_name[];
+   extern const char org_domain[];
+   extern const char version[];
+   extern const char build_date[];
+   extern const char build_time[];
+   extern const char compiler[];
+   extern const char sccs_version[];
 }
 
 #ifdef DEBUG_MSG

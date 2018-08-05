@@ -48,7 +48,7 @@ void BootPrintsQt::loadPlugins()
      if ( !lsProblems.isEmpty() )
      {
          QMessageBox::warning(
-                     0,
+                     nullptr,
                      QObject::tr(gui_app_name),
                      lsProblems.join(", ")
          );
@@ -58,7 +58,7 @@ void BootPrintsQt::loadPlugins()
    } catch(BootPrints::Exception exception)
    {
      QMessageBox::critical(
-                 0,
+                 nullptr,
                  QObject::tr(gui_app_name),
                  exception.toString()
      );

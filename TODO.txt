@@ -1,5 +1,16 @@
 TODO
 ====
+GalleryManager
+    --design interface for gallerymanager:
+        -- add, remove - MediaItems
+        -- retrieve(int offset, int count) : List<MediaItem>
+
+
+
+    -- better expcetion handling: plugin throws exception in init/dispose must be handled
+        or use promise
+    -- use promises/futures instead of singals and slots
+
     - extend gallerymanager interface with const QString & displayName() method;
     - FileSystemWatcher plugin
         - FileSystemWatcher to watch for filesystemChanges

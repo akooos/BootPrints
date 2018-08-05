@@ -9,9 +9,9 @@ class MediaDB
 public:
     MediaDB();
 
-    void add(const QFile &filepath);
-    void del(const QFile &filepath);
-    void set(const QByteArray &hash, const QFile &filepath);
+    void add(const MediaItem &filepath);
+    void del(const MediaItem &filepath);
+    void update(const QByteArray &hash, const QFile &filepath);
     QList<MediaItem> get(unsigned int offset, unsigned int limit );
 
 

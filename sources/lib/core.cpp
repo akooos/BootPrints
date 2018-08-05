@@ -2,7 +2,7 @@
 #include "core.h"
 #include <interfaces/internal.h>
 #include <QPluginLoader>
-#include "share.h"
+#include "mediaitemhandler.h"
 #include "mediaitem.h"
 #include "plugin.h"
 #include "internal.h"
@@ -47,7 +47,7 @@ DispatcherSPtr Core::createDispatcher(Interfaces::Plugin *plugin, const QJsonObj
 
 void Core::initializeDispatcher(DispatcherSPtr dispatcher)
 {
-    bool checker = QObject::connect(dispatcher.data(),SIGNAL(newShare(QUrl)),this,SLOT(onNewShare(QUrl)));
+    bool checker = QObject::connect(dispatcher.data(),SIGNAL(newMediaItem(MediaItem)),this,SLOT(onNewMediaItem(MediaItem)));
 
     Q_ASSERT(checker);
 
@@ -58,7 +58,7 @@ void Core::initializeDispatcher(DispatcherSPtr dispatcher)
     Q_UNUSED(checker);
 }
 
-void Core::onNewShare(const QUrl &url)
+void Core::onNewMediaItem(const MediaItem &mi)
 {
     Dispatcher *dispatcher = qobject_cast<Dispatcher*> ( QObject::sender() );
 
@@ -68,12 +68,12 @@ void Core::onNewShare(const QUrl &url)
         return;
     }
 
-    DEBUG_MSG("Share received" << url.toString())
+    DEBUG_MSG("MediaItem received" << mi.toString())
 
-    QList<Interfaces::Share *> ls = shareSubscriptions.values(dispatcher->getPluginPtr());
-    for (Interfaces::Share * share : ls )
+    QList<Interfaces::MediaItemHandler *> ls = mediaItemHandlers.values(dispatcher->getPluginPtr());
+    for (Interfaces::MediaItemHandler * handler : ls )
     {
-        share->newShareReceived(url);
+        handler->newMediaItem(mi);
     }
 }
 
@@ -94,15 +94,15 @@ void Core::onNewSubscribeForShare(const QString &pluginName)
 
     DEBUG_MSG("Subscriber" << subscriber->getMetaData().value("name").toString())
     DEBUG_MSG("Publisher" << publisher->getMetaData().value("name").toString())
-    Interfaces::Share *share = dynamic_cast<Interfaces::Share*>(subscriber->getPluginPtr());
+    Interfaces::MediaItemHandler *handler = dynamic_cast<Interfaces::MediaItemHandler*>(subscriber->getPluginPtr());
 
-    if ( !share )
+    if ( !handler )
     {
         DEBUG_MSG("Subscriber does not implement proper interface!" << subscriber->getMetaData().value("name").toString());
         return;
     }
 
-    shareSubscriptions.insert(publisher->getPluginPtr(),share);
+    mediaItemHandlers.insert(publisher->getPluginPtr(),handler);
     DEBUG_MSG("Subscription was successfull" << pluginName)
 }
 
@@ -124,7 +124,6 @@ void Core::addPlugin(const QString &name, Interfaces::Plugin *plugin, QJsonObjec
 
 void Core::initPlugins()
 {
-    auto it = plugins.begin();
     for ( auto it = plugins.begin(); it != plugins.end();)
     {
         Interfaces::Plugin *bootprints_plugin = it.value()->getPluginPtr();

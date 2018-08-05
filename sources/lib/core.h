@@ -5,7 +5,7 @@
 #include <QDir>
 #include <QVector>
 
-#include <share.h>
+#include <mediaitemhandler.h>
 #include <mediaitem.h>
 
 #include <internal.h>
@@ -25,7 +25,7 @@ namespace BootPrints
 
         QHash<QString,DispatcherSPtr> plugins;
 
-        QMultiHash<BootPrints::Interfaces::Plugin*,BootPrints::Interfaces::Share*> shareSubscriptions;
+        QMultiHash<BootPrints::Interfaces::Plugin*,BootPrints::Interfaces::MediaItemHandler*> mediaItemHandlers;
         void addPlugin(const QString &name, BootPrints::Interfaces::Plugin *plugin, QJsonObject metaData);
      public:
 
@@ -42,7 +42,7 @@ namespace BootPrints
 
       private slots:
         void onNewSubscribeForShare(const QString &pluginName);
-        void onNewShare(const QUrl &url);
+        void onNewMediaItem(const MediaItem &mi);
     };
 }
 

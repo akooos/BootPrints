@@ -15,13 +15,11 @@ class MainWindow : public QMainWindow
 
     Ui::MainWindow ui;
 
-
-
   protected:
     virtual void closeEvent(QCloseEvent *event) override;
 
   public:
-    explicit MainWindow(QWidget *parent = 0);
+    explicit MainWindow(QWidget *parent = nullptr);
     virtual ~MainWindow();
 
 };

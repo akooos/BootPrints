@@ -1,5 +1,5 @@
-#ifndef EXCEPTION_H
-#define EXCEPTION_H
+#ifndef BOOTPRINTS_EXCEPTION_H
+#define BOOTPRINTS_EXCEPTION_H
 
 #include <QException>
 #include "common.h"
@@ -77,4 +77,4 @@ namespace BootPrints
     };
 
 }
-#endif // EXCEPTION_H
+#endif // BOOTPRINTS_EXCEPTION_H

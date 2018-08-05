@@ -11,18 +11,19 @@ HEADERS += \
     common.h \
     mediaitem.h \
     interfaces/gallerymanager.h \
-    interfaces/share.h \
     interfaces/plugin.h \
     exception.h \
     core.h \
     interfaces/configui.h \
     interfaces/internal.h \
-    dispatcher.h
+    dispatcher.h \
+    interfaces/mediaitemhandler.h
 
 SOURCES += \
     mediaitem.cpp \
     core.cpp \
-    dispatcher.cpp
+    dispatcher.cpp \
+    common.cpp
 
 INCLUDEPATH += \
     interfaces
